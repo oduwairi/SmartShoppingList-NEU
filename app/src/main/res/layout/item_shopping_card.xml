@@ -31,11 +31,11 @@
                 android:text="Item Name"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/imageView"
+                app:layout_constraintLeft_toRightOf="@id/itemImage"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/itemImage"
                 android:layout_width="63dp"
                 android:layout_height="56dp"
                 android:layout_marginStart="20dp"
@@ -47,7 +47,7 @@
                 app:srcCompat="@drawable/ic_launcher_background" />
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/deleteButton"
                 android:layout_width="40dp"
                 android:layout_height="33dp"
                 android:layout_marginTop="20dp"
