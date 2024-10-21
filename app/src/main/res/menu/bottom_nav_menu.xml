@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_shopping"
+        android:icon="@drawable/cart"
+        android:title="@string/title_shopping" />
+
+    <item
+        android:id="@+id/navigation_inventory"
+        android:icon="@drawable/file_cabinet"
+        android:title="@string/title_inventory" />
+
+    <item
+        android:id="@+id/navigation_analytics"
+        android:icon="@drawable/chart_box_outline"
+        android:title="@string/title_analytics" />
+
+</menu>
