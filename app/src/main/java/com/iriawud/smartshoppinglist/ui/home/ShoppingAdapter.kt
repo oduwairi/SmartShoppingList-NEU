@@ -9,14 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
 
 class ShoppingAdapter(
-    private val items: List<ShoppingItem>,
+    private var items: MutableList<ShoppingItem>,
     private val onItemDeleted: (ShoppingItem) -> Unit
-) : RecyclerView.Adapter<ShoppingAdapter.ViewHolder>() {  // Corrected here
+) : RecyclerView.Adapter<ShoppingAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemName: TextView = itemView.findViewById(R.id.tvItemName)
         val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton)
-        // Add more UI components if necessary
+        val itemImage : ImageView = itemView.findViewById(R.id.itemImage)
+        val itemQuantity : TextView = itemView.findViewById(R.id.tvItemQuantity)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,8 +29,16 @@ class ShoppingAdapter(
         val item = items[position]
         holder.itemName.text = item.itemName
         holder.deleteButton.setOnClickListener { onItemDeleted(item) }
-        // Bind additional item attributes to other views here
+        holder.itemImage.setImageResource(R.drawable.ic_launcher_background)
+        holder.itemQuantity.text = item.quantity
     }
 
     override fun getItemCount() = items.size
+
+    fun updateItems(newItems: MutableList<ShoppingItem>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 }
+
+
