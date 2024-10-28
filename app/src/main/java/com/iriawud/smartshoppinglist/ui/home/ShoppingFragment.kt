@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
 
 class ShoppingFragment : Fragment() {
@@ -36,24 +37,57 @@ class ShoppingFragment : Fragment() {
             adapter.updateItems(updatedList)
         })
 
+        // Setup swipe functionality using the ShoppingCardSwiper class
+        val swipeHandler = ShoppingCardSwiper(
+            context = requireContext(),
+            adapter = adapter,
+            onItemDeleted = { item ->
+                handleItemDeleted(item)
+            },
+            onItemDone = { item ->
+                viewModel.markItemAsDone(item)
+            }
+        )
+
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.shoppingRecyclerView)
+
         binding.buttonAddItem.setOnClickListener {
-            val newItemName = binding.editTextNewItem.text.toString()
-            val numberPicker = binding.numberPickerQuantity
-            val quantity = numberPicker.value  // Get the current value from the NumberPicker
-            numberPicker.minValue = 1  // Minimum quantity
-            numberPicker.maxValue = 100  // Maximum quantity
-            numberPicker.value = 1  // Default quantity
+            val newItemName = binding.editTextNewItem.text.toString().trim()
             if (newItemName.isNotBlank()) {
+                // Map common item names to drawable resource names
+                val imageUrl = when (newItemName.lowercase()) {
+                    "apples" -> "apples" // Refers to `R.drawable.apple`
+                    "milk" -> "milk"   // Refers to `R.drawable.milk`
+                    "eggs" -> "eggs" // Refers to `R.drawable.banana`
+                    else -> null // Use a default or fallback image if no match is found
+                }
+
+                // Create a new ShoppingItem with the mapped imageUrl
                 val newItem = ShoppingItem(
                     itemName = newItemName,
-                    quantity = quantity.toString() + " pieces",  // Convert the integer quantity to String
+                    quantity = "1 piece",  // Convert the integer quantity to String
                     itemCategory = "Uncategorized",
                     price = 0.0,
-                    imageUrl = null
+                    imageUrl = imageUrl
                 )
+
+                // Add the new item to the ViewModel
                 viewModel.addItem(newItem)
                 binding.editTextNewItem.text.clear()
             }
+        }
+
+        setupBottomButtonListeners()
+    }
+
+    private fun setupBottomButtonListeners() {
+        binding.cardDeleteAll.setOnClickListener {
+            viewModel.deleteAllItems()
+        }
+
+        binding.cardDone.setOnClickListener {
+            viewModel.deleteAllItems()
         }
     }
 

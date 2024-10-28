@@ -25,4 +25,13 @@ class ShoppingViewModel : ViewModel() {
             _items.value = it // Trigger LiveData update
         }
     }
+
+    fun deleteAllItems() {
+        _items.value?.clear()
+        _items.postValue(_items.value)  // Notify observers of the change
+    }
+
+    fun markItemAsDone(item: ShoppingItem) {
+        // Update the item's status in the repository
+    }
 }
