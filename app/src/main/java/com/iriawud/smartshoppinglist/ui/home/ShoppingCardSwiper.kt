@@ -2,18 +2,17 @@ package com.iriawud.smartshoppinglist.ui.home
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
-import android.graphics.LinearGradient
-import android.graphics.Shader
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
 
 class ShoppingCardSwiper(
-    context: Context,
+    private val context: Context,
     private val adapter: ShoppingAdapter,
     private val onItemDeleted: (ShoppingItem) -> Unit,
     private val onItemDone: (ShoppingItem) -> Unit
@@ -21,8 +20,12 @@ class ShoppingCardSwiper(
 
     private val deleteIcon: Drawable? = ContextCompat.getDrawable(context, R.drawable.delete)
     private val doneIcon: Drawable? = ContextCompat.getDrawable(context, R.drawable.tick_checkbox_svgrepo_com)
-    private val iconSize = 140 // Size of the icons (in pixels)
-    private val paint = Paint()
+    private val iconSize = 100 // Size of the icons (in pixels)
+    private val textPaint = Paint().apply {
+        color = ContextCompat.getColor(context, android.R.color.black)
+        textSize = 40f
+        textAlign = Paint.Align.CENTER
+    }
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -37,12 +40,8 @@ class ShoppingCardSwiper(
         val item = adapter.getItemAtPosition(position)
 
         when (direction) {
-            ItemTouchHelper.LEFT -> {
-                onItemDeleted(item)
-            }
-            ItemTouchHelper.RIGHT -> {
-                onItemDone(item)
-            }
+            ItemTouchHelper.LEFT -> onItemDeleted(item)
+            ItemTouchHelper.RIGHT -> onItemDone(item)
         }
     }
 
@@ -59,65 +58,36 @@ class ShoppingCardSwiper(
 
         val itemView = viewHolder.itemView
         val iconMargin = (itemView.height - iconSize) / 2
+        val iconTop = itemView.top + iconMargin
+        val iconLeftDelete = itemView.right - iconMargin - iconSize
+        val iconLeftDone = itemView.left + iconMargin
+        val textY = iconTop + iconSize + 40  // Text position below the icon
 
-        // Swiping to the left (delete)
+        val swipeProgress = Math.abs(dX) / itemView.width.toFloat()  // Calculate the swipe progress as a fraction
+
+        // Color interpolation based on swipe progress
+        val startColorGreen = ContextCompat.getColor(context, R.color.light_green_start)
+        val endColorGreen = ContextCompat.getColor(context, R.color.deep_green_end)
+        val currentColorGreen = ColorUtils.blendARGB(startColorGreen, endColorGreen, swipeProgress)
+
+        val startColorRed = ContextCompat.getColor(context, R.color.light_red_start)
+        val endColorRed = ContextCompat.getColor(context, R.color.deep_red_end)
+        val currentColorRed = ColorUtils.blendARGB(startColorRed, endColorRed, swipeProgress)
+
+        // Draw the delete icon and text
         if (dX < 0) {
-            drawIconWithGradient(
-                c,
-                itemView.right.toFloat() + dX,
-                itemView.right.toFloat(),
-                itemView.top.toFloat(),
-                itemView.bottom.toFloat(),
-                Color.RED,
-                deleteIcon,
-                itemView.right - iconMargin - iconSize,
-                itemView.top + iconMargin
-            )
+            deleteIcon?.setColorFilter(currentColorRed, PorterDuff.Mode.SRC_IN)
+            deleteIcon?.setBounds(iconLeftDelete, iconTop, iconLeftDelete + iconSize, iconTop + iconSize)
+            deleteIcon?.draw(c)
+            c.drawText("Delete", iconLeftDelete + iconSize / 2f, textY.toFloat(), textPaint)
         }
 
-        // Swiping to the right (done)
+        // Draw the done icon and text
         else if (dX > 0) {
-            drawIconWithGradient(
-                c,
-                itemView.left.toFloat(),
-                itemView.left.toFloat() + dX,
-                itemView.top.toFloat(),
-                itemView.bottom.toFloat(),
-                Color.GREEN,
-                doneIcon,
-                itemView.left + iconMargin,
-                itemView.top + iconMargin
-            )
+            doneIcon?.setColorFilter(currentColorGreen, PorterDuff.Mode.SRC_IN)
+            doneIcon?.setBounds(iconLeftDone, iconTop, iconLeftDone + iconSize, iconTop + iconSize)
+            doneIcon?.draw(c)
+            c.drawText("Check", iconLeftDone + iconSize / 2f, textY.toFloat(), textPaint)
         }
-    }
-
-    private fun drawIconWithGradient(
-        canvas: Canvas,
-        startX: Float,
-        endX: Float,
-        top: Float,
-        bottom: Float,
-        color: Int,
-        icon: Drawable?,
-        iconLeft: Int,
-        iconTop: Int
-    ) {
-        // Create a sharper gradient that fades out more quickly
-        val gradient = LinearGradient(
-            startX,
-            top,
-            endX,
-            bottom,
-            intArrayOf(color, Color.TRANSPARENT),
-            floatArrayOf(0.2f, 0.8f), // Adjusted values for a sharper fade-off
-            Shader.TileMode.CLAMP
-        )
-
-        paint.shader = gradient
-        canvas.drawRect(startX, top, endX, bottom, paint)
-
-        // Draw the icon resized to the defined bounds
-        icon?.setBounds(iconLeft, iconTop, iconLeft + iconSize, iconTop + iconSize)
-        icon?.draw(canvas)
     }
 }

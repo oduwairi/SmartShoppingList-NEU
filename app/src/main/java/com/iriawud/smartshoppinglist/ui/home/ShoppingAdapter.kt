@@ -15,9 +15,8 @@ class ShoppingAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemName: TextView = itemView.findViewById(R.id.tvItemName)
-        val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton)
         val itemImage : ImageView = itemView.findViewById(R.id.itemImage)
-        val itemQuantity : TextView = itemView.findViewById(R.id.tvItemQuantity)
+        val itemCategory : TextView = itemView.findViewById(R.id.tvItemCategory)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,10 +26,8 @@ class ShoppingAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.itemName.text = item.itemName
-        holder.itemQuantity.text = item.quantity
-        holder.deleteButton.setOnClickListener { onItemDeleted(item) }
-
+        holder.itemName.text = item.name
+        holder.itemCategory.text = item.category
         // Set the image if `imageUrl` is available
         val context = holder.itemView.context
         val imageName = item.imageUrl

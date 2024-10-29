@@ -1,10 +1,11 @@
 package com.iriawud.smartshoppinglist.ui.home
 
 data class ShoppingItem(
-    val itemName:String,
+    val name:String,
     val quantity:String,
-    val itemCategory: String,
+    val category: String,
     val price: Double,
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+    val unit:String = "pc"
 )
 

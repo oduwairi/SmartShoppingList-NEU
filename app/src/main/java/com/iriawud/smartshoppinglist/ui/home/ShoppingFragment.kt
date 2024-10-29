@@ -65,9 +65,9 @@ class ShoppingFragment : Fragment() {
 
                 // Create a new ShoppingItem with the mapped imageUrl
                 val newItem = ShoppingItem(
-                    itemName = newItemName,
+                    name = newItemName,
                     quantity = "1 piece",  // Convert the integer quantity to String
-                    itemCategory = "Uncategorized",
+                    category = "Uncategorized",
                     price = 0.0,
                     imageUrl = imageUrl
                 )
