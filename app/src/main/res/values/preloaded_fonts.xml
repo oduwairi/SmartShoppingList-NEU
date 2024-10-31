@@ -4,6 +4,7 @@
         <item>@font/abeezee</item>
         <item>@font/abeezee_italic</item>
         <item>@font/albert_sans</item>
+        <item>@font/albert_sans_bold</item>
         <item>@font/albert_sans_italic</item>
     </array>
 </resources>

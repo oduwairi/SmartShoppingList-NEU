@@ -16,9 +16,13 @@
     <!-- res/values/colors.xml -->
     <color name="colorActivated">#CB5F3B</color>  <!-- Adjust this color for your active state -->
     <color name="colorInactive">#000000 </color>  <!-- Adjust this color for your inactive state -->
+    <color name="colorTextActivated">#CB5F3B</color>
+    <color name="colorTextInactive">#000000</color>
 
     <color name="orange_main">#CB5F3B</color>
     <color name="white_items">#FBFCFF</color>
     <color name="white_background">#F3F3F3</color>
+
+    <color name="hint_text">#CCD1D9</color>">
 
 </resources>

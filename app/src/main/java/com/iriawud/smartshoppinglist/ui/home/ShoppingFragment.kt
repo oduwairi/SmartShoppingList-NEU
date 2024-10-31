@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
+
 
 class ShoppingFragment : Fragment() {
     private lateinit var adapter: ShoppingAdapter
@@ -16,9 +17,10 @@ class ShoppingFragment : Fragment() {
 
     private var _binding: FragmentShoppingBinding? = null
     private val binding get() = _binding!!
+    private var isExpanded: Boolean = false
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentShoppingBinding.inflate(inflater, container, false)
         return binding.root
@@ -78,18 +80,26 @@ class ShoppingFragment : Fragment() {
             }
         }
 
-        setupBottomButtonListeners()
-    }
-
-    private fun setupBottomButtonListeners() {
-        binding.cardDeleteAll.setOnClickListener {
-            viewModel.deleteAllItems()
+        binding.buttonItemDetails.setOnClickListener {
+            // Toggle expansion of the add item card view to show advanced details
+            val params = binding.expandableCardInputs.layoutParams
+            if (!isExpanded) {
+                // Set specific height when expanded (Example uses 500 pixels or use `LayoutParams.WRAP_CONTENT` for wrap content)
+                params.height = dpToPx(50f)
+            } else {
+                // Collapse by setting height back to a minimal height or `LayoutParams.WRAP_CONTENT`
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            binding.expandableCardInputs.layoutParams = params
+            isExpanded = !isExpanded
         }
 
-        binding.cardDone.setOnClickListener {
-            viewModel.deleteAllItems()
-        }
     }
+
+    private fun dpToPx(dp: Float): Int {
+        return (dp * (requireContext().resources.displayMetrics.densityDpi.toFloat() / 160f)).toInt()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

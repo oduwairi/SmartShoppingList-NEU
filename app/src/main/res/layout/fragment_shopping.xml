@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#5E35B1"
+    android:background="@color/white_background"
     tools:context=".ui.home.ShoppingFragment">
 
     <androidx.cardview.widget.CardView
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="75dp"
-        android:backgroundTint="#FBFAFB"
+        android:backgroundTint="@color/orange_main"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,14 +24,14 @@
             android:layout_height="50dp"
             android:layout_margin="8dp"
             android:src="@drawable/microphone"
-            android:tint="@color/orange_main" />
+            android:tint="@color/white_items" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/buttonItemDetails"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="5dp"
         app:cardCornerRadius="30dp"
         app:layout_constraintEnd_toStartOf="@id/buttonAddItem"
@@ -50,8 +50,8 @@
         android:id="@+id/buttonAddItem"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="13dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
         app:cardCornerRadius="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topActionBarShopping">
@@ -136,24 +136,205 @@
         android:id="@+id/inputBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="0.3"
-        android:background="@android:color/white"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topActionBarShopping">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/expandableCardInputs"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:alpha="0.3"
-            android:backgroundTint="#FAF3FF"
+            android:layout_height="400dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="3dp"
+            android:backgroundTint="@color/white_items"
             android:visibility="visible"
             app:cardBackgroundColor="@color/white_items"
             app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/priorityCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="7dp"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/priorityText">>
+
+                    <EditText
+                        android:id="@+id/priorityEditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="5"
+                        android:hint="Priority"
+                        android:inputType="text"
+                        android:padding="5dp"
+                        android:textColorHint="@color/hint_text" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/quantityEditCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="75dp"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">>
+
+                    <EditText
+                        android:id="@+id/quantityEditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="7"
+                        android:hint="Quantity"
+                        android:inputType="text"
+                        android:padding="5dp"
+                        android:textColorHint="@color/hint_text" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/tagCard"
+                    android:layout_width="100dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="7dp"
+                    app:cardBackgroundColor="@color/orange_main"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tagsText">
+
+                    <TextView
+                        android:id="@+id/tagsCardText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Vegan"
+                        android:textColor="@color/white_items" />
+                </androidx.cardview.widget.CardView>
+
+
+
+                <TextView
+                    android:id="@+id/quantityText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="50dp"
+                    android:fontFamily="@font/albert_sans_bold"
+                    android:text="Quantity and unit"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/priorityText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="185dp"
+                    android:fontFamily="@font/albert_sans_bold"
+                    android:text="Priority and frequency"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tagsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="120dp"
+                    android:fontFamily="@font/albert_sans_bold"
+                    android:text="Tags"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/frequencyCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="7dp"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintStart_toEndOf="@id/priorityCard"
+                    app:layout_constraintTop_toBottomOf="@id/priorityText">>
+
+                    <EditText
+                        android:id="@+id/frequencyEditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="5"
+                        android:hint="Frequency"
+                        android:inputType="text"
+                        android:padding="5dp"
+                        android:textColorHint="@color/hint_text" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/quantityUnitEditCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="75dp"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintStart_toEndOf="@id/quantityEditCard"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <EditText
+                        android:id="@+id/quantityUnitEditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="4"
+                        android:hint="Unit "
+                        android:inputType="text"
+                        android:padding="5dp"
+                        android:textColorHint="@color/hint_text" />
+                </androidx.cardview.widget.CardView>
+
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="69dp"
+                    android:text="Fill"
+                    app:checkedState="checked"
+                    app:layout_constraintStart_toEndOf="@+id/quantityUnitEditCard"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <CheckBox
+                    android:id="@+id/checkBox3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="69dp"
+                    android:text="Auto"
+                    app:layout_constraintStart_toEndOf="@+id/checkBox"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -161,10 +342,12 @@
         android:id="@+id/editTextNewItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="11dp"
         android:layout_marginEnd="5dp"
+        android:fontFamily="@font/albert_sans"
         android:hint="I'm shopping for..."
+        android:textColorHint="@color/hint_text"
         app:layout_constraintEnd_toStartOf="@id/buttonItemDetails"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topActionBarShopping" />
