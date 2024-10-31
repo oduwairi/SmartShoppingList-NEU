@@ -4,7 +4,7 @@ data class ShoppingItem(
     val name:String,
     val quantity:String,
     val category: String,
-    val price: Double,
+    val price: String,
     val imageUrl: String? = null,
     val unit:String = "pc"
 )

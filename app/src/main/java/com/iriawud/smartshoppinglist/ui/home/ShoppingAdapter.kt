@@ -16,6 +16,7 @@ class ShoppingAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemName: TextView = itemView.findViewById(R.id.tvItemName)
         val itemImage : ImageView = itemView.findViewById(R.id.itemImage)
+        val itemQuantity: TextView = itemView.findViewById(R.id.tvItemQuantity)
         val itemCategory : TextView = itemView.findViewById(R.id.tvItemCategory)
     }
 
@@ -28,6 +29,7 @@ class ShoppingAdapter(
         val item = items[position]
         holder.itemName.text = item.name
         holder.itemCategory.text = item.category
+        holder.itemQuantity.text = item.quantity
         // Set the image if `imageUrl` is available
         val context = holder.itemView.context
         val imageName = item.imageUrl

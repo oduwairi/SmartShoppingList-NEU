@@ -1,5 +1,6 @@
 package com.iriawud.smartshoppinglist.ui.home
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -56,44 +57,59 @@ class ShoppingFragment : Fragment() {
 
         binding.buttonAddItem.setOnClickListener {
             val newItemName = binding.editTextNewItem.text.toString().trim()
-            if (newItemName.isNotBlank()) {
-                // Map common item names to drawable resource names
-                val imageUrl = when (newItemName.lowercase()) {
-                    "apples" -> "apples" // Refers to `R.drawable.apple`
-                    "milk" -> "milk"   // Refers to `R.drawable.milk`
-                    "eggs" -> "eggs" // Refers to `R.drawable.banana`
-                    else -> null // Use a default or fallback image if no match is found
-                }
+            val newItemQuantity = binding.quantityEditText.text.toString().trim()
+            val newItemQuantityUnit = binding.quantityUnitEditText.text.toString().trim()
+            val newItemCost = binding.costEditText.text.toString().trim()
+            val newItemCostUnit = binding.costUnitEditText.text.toString().trim()
 
+            if (newItemName.isNotBlank()) {
                 // Create a new ShoppingItem with the mapped imageUrl
                 val newItem = ShoppingItem(
                     name = newItemName,
-                    quantity = "1 piece",  // Convert the integer quantity to String
+                    quantity = newItemQuantity + " " + newItemQuantityUnit,
                     category = "Uncategorized",
-                    price = 0.0,
-                    imageUrl = imageUrl
+                    price = newItemCost + " " + newItemCostUnit,
+                    imageUrl = newItemName.lowercase()
                 )
 
                 // Add the new item to the ViewModel
                 viewModel.addItem(newItem)
                 binding.editTextNewItem.text.clear()
+
+                //reset expanded view
+                if (isExpanded) {
+                    toggleExpandableDetailsCard()
+                }
             }
         }
 
         binding.buttonItemDetails.setOnClickListener {
-            // Toggle expansion of the add item card view to show advanced details
-            val params = binding.expandableCardInputs.layoutParams
-            if (!isExpanded) {
-                // Set specific height when expanded (Example uses 500 pixels or use `LayoutParams.WRAP_CONTENT` for wrap content)
-                params.height = dpToPx(50f)
-            } else {
-                // Collapse by setting height back to a minimal height or `LayoutParams.WRAP_CONTENT`
-                params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-            }
-            binding.expandableCardInputs.layoutParams = params
-            isExpanded = !isExpanded
+            toggleExpandableDetailsCard()
         }
 
+    }
+
+    private fun toggleExpandableDetailsCard() {
+        val currentHeight = binding.expandableCardInputs.height
+        val newHeight: Int
+        if (!isExpanded) {
+            // Assuming dpToPx is an extension function on Context
+            newHeight = dpToPx(500f) // Change 200f to your desired expanded height in dp
+        } else {
+            newHeight = dpToPx(50f)  // Minimal height when collapsed
+        }
+
+        val valueAnimator = ValueAnimator.ofInt(currentHeight, newHeight)
+        valueAnimator.addUpdateListener { animation ->
+            val animatedValue = animation.animatedValue as Int
+            val layoutParams = binding.expandableCardInputs.layoutParams
+            layoutParams.height = animatedValue
+            binding.expandableCardInputs.layoutParams = layoutParams
+        }
+        valueAnimator.duration = 300 // Duration of the transition in milliseconds
+        valueAnimator.start()
+
+        isExpanded = !isExpanded
     }
 
     private fun dpToPx(dp: Float): Int {
