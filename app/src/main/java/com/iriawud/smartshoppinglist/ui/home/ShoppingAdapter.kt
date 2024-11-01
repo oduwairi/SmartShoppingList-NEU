@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
 
@@ -18,6 +20,7 @@ class ShoppingAdapter(
         val itemImage : ImageView = itemView.findViewById(R.id.itemImage)
         val itemQuantity: TextView = itemView.findViewById(R.id.tvItemQuantity)
         val itemCategory : TextView = itemView.findViewById(R.id.tvItemCategory)
+        val itemPriorityIndicator : CardView = itemView.findViewById(R.id.priorityColoredCard)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,6 +33,7 @@ class ShoppingAdapter(
         holder.itemName.text = item.name
         holder.itemCategory.text = item.category
         holder.itemQuantity.text = item.quantity
+        holder.itemPriorityIndicator.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, PriorityColor.from(item.priority).colorRes))
         // Set the image if `imageUrl` is available
         val context = holder.itemView.context
         val imageName = item.imageUrl

@@ -61,6 +61,7 @@ class ShoppingFragment : Fragment() {
             val newItemQuantityUnit = binding.quantityUnitEditText.text.toString().trim()
             val newItemCost = binding.costEditText.text.toString().trim()
             val newItemCostUnit = binding.costUnitEditText.text.toString().trim()
+            val newItemPriority = binding.prioritySlider.value.toInt()
 
             if (newItemName.isNotBlank()) {
                 // Create a new ShoppingItem with the mapped imageUrl
@@ -69,12 +70,18 @@ class ShoppingFragment : Fragment() {
                     quantity = newItemQuantity + " " + newItemQuantityUnit,
                     category = "Uncategorized",
                     price = newItemCost + " " + newItemCostUnit,
+                    priority = newItemPriority,
                     imageUrl = newItemName.lowercase()
                 )
 
-                // Add the new item to the ViewModel
+                // Add the new item to the ViewModel and reset fields
                 viewModel.addItem(newItem)
                 binding.editTextNewItem.text.clear()
+                binding.quantityEditText.text.clear()
+                binding.quantityUnitEditText.text.clear()
+                binding.costEditText.text.clear()
+                binding.costUnitEditText.text.clear()
+                binding.prioritySlider.value = 5f
 
                 //reset expanded view
                 if (isExpanded) {

@@ -25,4 +25,8 @@
 
     <color name="hint_text">#CCD1D9</color>">
 
+    <color name="priority_high">#7FC50000</color>">
+    <color name="priority_medium">#7FFADC00</color>">
+    <color name="priority_low">#7F16CE02</color>">
+
 </resources>
