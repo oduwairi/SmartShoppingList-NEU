@@ -1,6 +1,5 @@
 package com.iriawud.smartshoppinglist.ui.home
 
-import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,9 +34,5 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
 
     fun markItemAsDone(item: ShoppingItem) {
         // Update the item's status in the repository
-    }
-
-    fun isItemListEmpty(): Boolean {
-        return _items.value.isNullOrEmpty()
     }
 }

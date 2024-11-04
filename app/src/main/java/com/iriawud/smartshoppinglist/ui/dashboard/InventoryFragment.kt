@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentInventoryBinding
 import com.iriawud.smartshoppinglist.ui.ShoppingUtils
 
@@ -40,6 +41,14 @@ class InventoryFragment : Fragment() {
             adapter.updateItems(updatedList)
         }
 
+        viewModel.items.observe(viewLifecycleOwner) { items ->
+            adapter.updateItems(items)
+            ShoppingUtils.updateEmptyStateView(
+                emptyStateView = binding.root.findViewById(R.id.emptyStateView),
+                recyclerView = binding.inventoryRecyclerView,
+                isEmptyCheck = { items.isEmpty() })
+        }
+
         binding.buttonAddItem.setOnClickListener {
             ShoppingUtils.addItem(
                 binding.editTextNewItemInventory.text.toString().trim(),
@@ -52,7 +61,6 @@ class InventoryFragment : Fragment() {
                 listOf(
                     binding.editTextNewItemInventory,
                     binding.quantityEditText,
-                    binding.quantityUnitEditText,
                     binding.costEditText,
                     binding.costUnitEditText
                 ),

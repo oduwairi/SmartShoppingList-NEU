@@ -249,7 +249,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/expandableCardInputs"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="1dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="1dp"
@@ -415,24 +415,21 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/quantityUnitEditCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="75dp"
                     app:cardCornerRadius="6dp"
+                    app:layout_constraintBottom_toBottomOf="@id/quantityEditCard"
+                    app:layout_constraintEnd_toEndOf="@id/costUnitEditCard"
                     app:layout_constraintStart_toEndOf="@id/quantityEditCard"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="@id/quantityEditCard">
 
-                    <EditText
-                        android:id="@+id/quantityUnitEditText"
+                    <Spinner
+                        android:id="@+id/quantityUnitSpinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:ems="4"
-                        android:hint="Unit "
-                        android:inputType="text"
-                        android:padding="5dp"
-                        android:textColorHint="@color/hint_text" />
+                        android:spinnerMode="dropdown" />
+
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
@@ -452,7 +449,7 @@
                         android:background="@null"
                         android:ems="7"
                         android:hint="Quantity"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="5dp"
                         android:textColorHint="@color/hint_text" />
                 </androidx.cardview.widget.CardView>
@@ -510,8 +507,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-7dp"
+                    android:layout_marginEnd="5dp"
                     android:orientation="horizontal"
-                    app:layout_constraintStart_toEndOf="@id/quantityUnitEditCard"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/quantityUnitEditCard">
 
                     <RadioButton
@@ -566,7 +564,7 @@
                         android:background="@null"
                         android:ems="7"
                         android:hint="Cost"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="5dp"
                         android:textColorHint="@color/hint_text" />
                 </androidx.cardview.widget.CardView>
@@ -649,7 +647,7 @@
                         android:background="@null"
                         android:ems="5"
                         android:hint="Frequency"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:padding="5dp"
                         android:textColorHint="@color/hint_text" />
                 </androidx.cardview.widget.CardView>

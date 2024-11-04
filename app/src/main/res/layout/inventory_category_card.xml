@@ -23,16 +23,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/inventoryItemGridLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/categoryNameText">
-
-            </androidx.gridlayout.widget.GridLayout>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/categoryInnerRecyclerView"
                 android:layout_width="match_parent"
@@ -42,8 +32,9 @@
 
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
                 android:tint="@color/orange_main"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

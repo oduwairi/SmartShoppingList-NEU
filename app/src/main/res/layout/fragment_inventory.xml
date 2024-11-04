@@ -145,6 +145,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextNewItemInventory" />
 
+    <include
+        android:id="@+id/emptyStateView"
+        layout="@layout/empty_inventory"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/buttonItemDetails"
         android:layout_width="40dp"

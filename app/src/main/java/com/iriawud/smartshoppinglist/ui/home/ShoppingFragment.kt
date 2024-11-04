@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -38,6 +41,14 @@ class ShoppingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // List of units
+        val units = listOf("kg", "lbs", "oz", "pcs", "l", "gal", "pack", "dozen")
+        val adapterUnits = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, units)
+        adapterUnits.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Set up the Spinner
+        val quantityUnitSpinner: Spinner = view.findViewById(R.id.quantityUnitSpinner)
+        quantityUnitSpinner.adapter = adapterUnits
+
         viewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
 
         adapter = ShoppingAdapter(mutableListOf<ShoppingItem>())
@@ -50,7 +61,10 @@ class ShoppingFragment : Fragment() {
 
         viewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)
-            updateEmptyStateView()
+            ShoppingUtils.updateEmptyStateView(
+                emptyStateView = binding.root.findViewById(R.id.emptyStateView),
+                recyclerView = binding.shoppingRecyclerView,
+                isEmptyCheck = { items.isEmpty() })
         }
 
         // Setup swipe functionality using the ShoppingCardSwiper class
@@ -72,7 +86,7 @@ class ShoppingFragment : Fragment() {
             ShoppingUtils.addItem(
                 binding.editTextNewItem.text.toString().trim(),
                 binding.quantityEditText.text.toString().trim(),
-                binding.quantityUnitEditText.text.toString().trim(),
+                binding.quantityUnitSpinner.selectedItem.toString().trim(),
                 binding.costEditText.text.toString().trim(),
                 binding.costUnitEditText.text.toString().trim(),
                 binding.prioritySlider.value.toInt(),
@@ -80,7 +94,6 @@ class ShoppingFragment : Fragment() {
                 listOf(
                     binding.editTextNewItem,
                     binding.quantityEditText,
-                    binding.quantityUnitEditText,
                     binding.costEditText,
                     binding.costUnitEditText
                 ),
@@ -105,17 +118,6 @@ class ShoppingFragment : Fragment() {
                 binding.bottomExpandableMenuButtons,
                 isBottomMenuExpanded
             )
-        }
-    }
-
-    private fun updateEmptyStateView() {
-        val emptyStateView = binding.root.findViewById<View>(R.id.emptyStateView)
-        if (viewModel.isItemListEmpty()) {
-            emptyStateView.visibility = View.VISIBLE
-            binding.shoppingRecyclerView.visibility = View.GONE
-        } else {
-            emptyStateView.visibility = View.GONE
-            binding.shoppingRecyclerView.visibility = View.VISIBLE
         }
     }
 

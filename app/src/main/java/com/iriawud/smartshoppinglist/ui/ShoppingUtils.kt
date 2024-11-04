@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
 import com.iriawud.smartshoppinglist.ui.home.ShoppingItem
 import com.iriawud.smartshoppinglist.ui.home.ShoppingViewModel
@@ -99,11 +100,23 @@ object ShoppingUtils {
         return !isCardExpanded
     }
 
+    fun updateEmptyStateView(
+        emptyStateView: View,
+        recyclerView: RecyclerView,
+        isEmptyCheck: () -> Boolean
+    ) {
+        if (isEmptyCheck()) {
+            emptyStateView.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            emptyStateView.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
+    }
+
     private fun dpToPx(dp: Float, context: Context): Int {
         return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / 160f)).toInt()
     }
-}
 
-interface ItemViewModel {
-    fun addItem(item: ShoppingItem)
+
 }
