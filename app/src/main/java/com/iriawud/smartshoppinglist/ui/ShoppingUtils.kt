@@ -12,35 +12,42 @@ import com.iriawud.smartshoppinglist.ui.home.ShoppingViewModel
 
 object ShoppingUtils {
     fun addItem(
-        itemName: String,
-        itemQuantity: String,
-        itemQuantityUnit: String,
-        itemCost: String,
-        itemCostUnit: String,
-        itemPriority: Int,
-        viewModel: ShoppingViewModel,
-        inputFields: List<EditText>,
+        newItemName: String,
+        newItemQuantity: String,
+        newItemQuantityUnit: String,
+        newItemCost: String,
+        newItemCostUnit: String,
+        newItemPriority: Int,
+        viewModel: ItemViewModel, // Replace with your actual ViewModel type
+        fieldsToClear: List<EditText>,
         prioritySlider: Slider,
-        toggleExpand: () -> Unit,
+        expandableCard: ViewGroup,
+        context: Context,
         isInputBarExpanded: Boolean
-    ) {
-        if (itemName.isNotBlank()) {
+    ): Boolean {
+        if (newItemName.isNotBlank()) {
             val newItem = ShoppingItem(
-                name = itemName,
-                quantity = "$itemQuantity $itemQuantityUnit",
+                name = newItemName,
+                quantity = "$newItemQuantity $newItemQuantityUnit",
                 category = "Uncategorized",
-                price = "$itemCost $itemCostUnit",
-                priority = itemPriority,
-                imageUrl = itemName.lowercase() // Note: `lowercase` requires Kotlin 1.4 or above
+                price = "$newItemCost $newItemCostUnit",
+                priority = newItemPriority,
+                imageUrl = newItemName.lowercase()
             )
 
             viewModel.addItem(newItem)
 
-            inputFields.forEach { it.text.clear() }
+            // Clear the fields
+            fieldsToClear.forEach { it.text.clear() }
             prioritySlider.value = 5f
 
-            if (isInputBarExpanded) toggleExpand()
+            // Toggle expandable details card if needed
+            if (isInputBarExpanded) {
+                toggleExpandableDetailsCard(expandableCard, context, isInputBarExpanded)
+                return true
+            }
         }
+        return false
     }
 
     fun toggleExpandableMenuButtons(
@@ -95,4 +102,8 @@ object ShoppingUtils {
     private fun dpToPx(dp: Float, context: Context): Int {
         return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / 160f)).toInt()
     }
+}
+
+interface ItemViewModel {
+    fun addItem(item: ShoppingItem)
 }

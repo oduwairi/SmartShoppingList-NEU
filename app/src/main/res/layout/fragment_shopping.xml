@@ -42,7 +42,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:src="@drawable/delete"
-            android:tint="@color/orange_main" />
+            android:tint="#FD6A6A" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -61,7 +61,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:src="@drawable/tick_circle_svgrepo_com"
-            android:tint="@color/orange_main" />
+            android:tint="@color/light_green_start" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView

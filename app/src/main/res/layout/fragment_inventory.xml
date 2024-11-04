@@ -39,6 +39,7 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginEnd="14dp"
+        android:backgroundTint="@color/white_items"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="@id/buttonMenuExpandInventory"
         app:layout_constraintEnd_toStartOf="@id/buttonMenuExpandInventory"
@@ -50,7 +51,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:src="@drawable/delete"
-            android:tint="@color/orange_main" />
+            android:tint="#FD6A6A" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -69,7 +70,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:src="@drawable/tick_circle_svgrepo_com"
-            android:tint="@color/orange_main" />
+            android:tint="@color/light_green_start" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -77,6 +78,7 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginBottom="14dp"
+        android:backgroundTint="@color/orange_main"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toTopOf="@id/buttonMenuExpandInventory"
         app:layout_constraintEnd_toEndOf="@id/buttonMenuExpandInventory"
@@ -88,7 +90,7 @@
             android:layout_height="35dp"
             android:layout_gravity="center"
             android:src="@drawable/microphone"
-            android:tint="@color/orange_main" />
+            android:tint="@color/white_items" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -192,7 +194,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/expandableCardInputs"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="1dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="1dp"

@@ -12,7 +12,6 @@ import com.iriawud.smartshoppinglist.R
 
 class ShoppingAdapter(
     private var items: MutableList<ShoppingItem>,
-    private val onItemDeleted: (ShoppingItem) -> Unit
 ) : RecyclerView.Adapter<ShoppingAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

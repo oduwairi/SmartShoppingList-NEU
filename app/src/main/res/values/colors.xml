@@ -29,4 +29,10 @@
     <color name="priority_medium">#7FFADC00</color>">
     <color name="priority_low">#7F0027D3</color>">
 
+    <color name="amount_high">#7F30DD04</color>">
+    <color name="amount_medium">#7FFADC00</color>">
+    <color name="amount_low">#7FDD1E04</color>">
+
+    <color name="bread_and_pastry">#96FFCD96</color>">"
+
 </resources>

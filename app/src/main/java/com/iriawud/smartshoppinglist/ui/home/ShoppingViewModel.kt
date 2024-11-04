@@ -1,10 +1,12 @@
 package com.iriawud.smartshoppinglist.ui.home
 
+import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.iriawud.smartshoppinglist.ui.ItemViewModel
 
-class ShoppingViewModel : ViewModel() {
+class ShoppingViewModel : ViewModel(), ItemViewModel {
     private val _items = MutableLiveData<MutableList<ShoppingItem>>()
     val items: LiveData<MutableList<ShoppingItem>> get() = _items
 
@@ -12,7 +14,7 @@ class ShoppingViewModel : ViewModel() {
         _items.value = mutableListOf() // Initialize with an empty mutable list
     }
 
-    fun addItem(item: ShoppingItem) {
+    override fun addItem(item: ShoppingItem) {
         _items.value?.let {
             it.add(item)
             _items.value = it // Trigger LiveData update

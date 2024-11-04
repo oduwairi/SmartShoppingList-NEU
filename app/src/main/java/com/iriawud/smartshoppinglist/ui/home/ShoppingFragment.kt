@@ -34,7 +34,7 @@ class ShoppingFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
 
-        adapter = ShoppingAdapter(mutableListOf(), this::handleItemDeleted)
+        adapter = ShoppingAdapter(mutableListOf<ShoppingItem>())
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 
@@ -74,7 +74,8 @@ class ShoppingFragment : Fragment() {
                     binding.costUnitEditText
                 ),
                 binding.prioritySlider,
-                ::toggleExpandableDetailsCard,
+                binding.expandableCardInputs,
+                requireContext(),
                 isInputBarExpanded
             )
         }
@@ -95,34 +96,6 @@ class ShoppingFragment : Fragment() {
             )
         }
     }
-
-    private fun toggleExpandableDetailsCard() {
-        val currentHeight = binding.expandableCardInputs.height
-        val newHeight: Int
-        if (!isInputBarExpanded) {
-            // Assuming dpToPx is an extension function on Context
-            newHeight = dpToPx(500f) // Change 200f to your desired expanded height in dp
-        } else {
-            newHeight = dpToPx(50f)  // Minimal height when collapsed
-        }
-
-        val valueAnimator = ValueAnimator.ofInt(currentHeight, newHeight)
-        valueAnimator.addUpdateListener { animation ->
-            val animatedValue = animation.animatedValue as Int
-            val layoutParams = binding.expandableCardInputs.layoutParams
-            layoutParams.height = animatedValue
-            binding.expandableCardInputs.layoutParams = layoutParams
-        }
-        valueAnimator.duration = 300 // Duration of the transition in milliseconds
-        valueAnimator.start()
-
-        isInputBarExpanded = !isInputBarExpanded
-    }
-
-    private fun dpToPx(dp: Float): Int {
-        return (dp * (requireContext().resources.displayMetrics.densityDpi.toFloat() / 160f)).toInt()
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
