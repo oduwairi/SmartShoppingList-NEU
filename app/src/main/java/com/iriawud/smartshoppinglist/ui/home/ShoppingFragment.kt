@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
+import com.iriawud.smartshoppinglist.ui.ShoppingUtils
 
 
 class ShoppingFragment : Fragment() {
@@ -18,7 +19,8 @@ class ShoppingFragment : Fragment() {
 
     private var _binding: FragmentShoppingBinding? = null
     private val binding get() = _binding!!
-    private var isExpanded: Boolean = false
+    private var isInputBarExpanded: Boolean = false
+    private var isBottomMenuExpanded: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -56,50 +58,48 @@ class ShoppingFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.shoppingRecyclerView)
 
         binding.buttonAddItem.setOnClickListener {
-            val newItemName = binding.editTextNewItem.text.toString().trim()
-            val newItemQuantity = binding.quantityEditText.text.toString().trim()
-            val newItemQuantityUnit = binding.quantityUnitEditText.text.toString().trim()
-            val newItemCost = binding.costEditText.text.toString().trim()
-            val newItemCostUnit = binding.costUnitEditText.text.toString().trim()
-            val newItemPriority = binding.prioritySlider.value.toInt()
-
-            if (newItemName.isNotBlank()) {
-                // Create a new ShoppingItem with the mapped imageUrl
-                val newItem = ShoppingItem(
-                    name = newItemName,
-                    quantity = newItemQuantity + " " + newItemQuantityUnit,
-                    category = "Uncategorized",
-                    price = newItemCost + " " + newItemCostUnit,
-                    priority = newItemPriority,
-                    imageUrl = newItemName.lowercase()
-                )
-
-                // Add the new item to the ViewModel and reset fields
-                viewModel.addItem(newItem)
-                binding.editTextNewItem.text.clear()
-                binding.quantityEditText.text.clear()
-                binding.quantityUnitEditText.text.clear()
-                binding.costEditText.text.clear()
-                binding.costUnitEditText.text.clear()
-                binding.prioritySlider.value = 5f
-
-                //reset expanded view
-                if (isExpanded) {
-                    toggleExpandableDetailsCard()
-                }
-            }
+            ShoppingUtils.addItem(
+                binding.editTextNewItem.text.toString().trim(),
+                binding.quantityEditText.text.toString().trim(),
+                binding.quantityUnitEditText.text.toString().trim(),
+                binding.costEditText.text.toString().trim(),
+                binding.costUnitEditText.text.toString().trim(),
+                binding.prioritySlider.value.toInt(),
+                viewModel,
+                listOf(
+                    binding.editTextNewItem,
+                    binding.quantityEditText,
+                    binding.quantityUnitEditText,
+                    binding.costEditText,
+                    binding.costUnitEditText
+                ),
+                binding.prioritySlider,
+                ::toggleExpandableDetailsCard,
+                isInputBarExpanded
+            )
         }
 
         binding.buttonItemDetails.setOnClickListener {
-            toggleExpandableDetailsCard()
+            isInputBarExpanded = ShoppingUtils.toggleExpandableDetailsCard(
+                binding.expandableCardInputs,
+                requireContext(),
+                isInputBarExpanded
+            )
         }
 
+        binding.buttonMenuExpand.setOnClickListener {
+            isBottomMenuExpanded = ShoppingUtils.toggleExpandableMenuButtons(
+                binding.buttonMenuExpand,
+                binding.bottomExpandableMenuButtons,
+                isBottomMenuExpanded
+            )
+        }
     }
 
     private fun toggleExpandableDetailsCard() {
         val currentHeight = binding.expandableCardInputs.height
         val newHeight: Int
-        if (!isExpanded) {
+        if (!isInputBarExpanded) {
             // Assuming dpToPx is an extension function on Context
             newHeight = dpToPx(500f) // Change 200f to your desired expanded height in dp
         } else {
@@ -116,7 +116,7 @@ class ShoppingFragment : Fragment() {
         valueAnimator.duration = 300 // Duration of the transition in milliseconds
         valueAnimator.start()
 
-        isExpanded = !isExpanded
+        isInputBarExpanded = !isInputBarExpanded
     }
 
     private fun dpToPx(dp: Float): Int {

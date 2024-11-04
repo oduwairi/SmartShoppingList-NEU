@@ -8,25 +8,79 @@
     tools:context=".ui.home.ShoppingFragment">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/buttonMic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="75dp"
-        android:backgroundTint="@color/orange_main"
+        android:id="@+id/buttonSearch"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="-4dp"
+        android:layout_marginBottom="-4dp"
         app:cardCornerRadius="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-
+        app:layout_constraintBottom_toTopOf="@id/buttonMenuExpand"
+        app:layout_constraintStart_toEndOf="@+id/buttonMenuExpand">
 
         <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="8dp"
+            android:id="@+id/buttonSearchIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/search_svgrepo_com"
+            android:tint="@color/orange_main" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/buttonDeleteAll"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="14dp"
+        app:cardCornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/buttonMenuExpand"
+        app:layout_constraintEnd_toStartOf="@id/buttonMenuExpand"
+        app:layout_constraintTop_toTopOf="@id/buttonMenuExpand">
+
+        <ImageView
+            android:id="@+id/buttonDeleteAllIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/delete"
+            android:tint="@color/orange_main" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/buttonDoneAll"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="14dp"
+        app:cardCornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/buttonMenuExpand"
+        app:layout_constraintStart_toEndOf="@id/buttonMenuExpand"
+        app:layout_constraintTop_toTopOf="@id/buttonMenuExpand">
+
+        <ImageView
+            android:id="@+id/buttonDoneAllIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/tick_circle_svgrepo_com"
+            android:tint="@color/orange_main" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/buttonMic"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="14dp"
+        app:cardCornerRadius="30dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonMenuExpand"
+        app:layout_constraintEnd_toEndOf="@id/buttonMenuExpand"
+        app:layout_constraintStart_toStartOf="@id/buttonMenuExpand">
+
+        <ImageView
+            android:id="@+id/buttonMicIcon"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
             android:src="@drawable/microphone"
-            android:tint="@color/white_items" />
+            android:tint="@color/orange_main" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -45,6 +99,48 @@
             android:layout_height="31dp"
             android:layout_gravity="center"
             android:src="@drawable/details_backup_svgrepo_com"
+            android:tint="@color/orange_main" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/buttonMenuExpand"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="75dp"
+        android:backgroundTint="@color/orange_main"
+        app:cardCornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:padding="4dp"
+            android:src="@drawable/menu_navigation_grid_1529_svgrepo_com"
+            android:tint="@color/white_items" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/buttonSort"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="-4dp"
+        android:layout_marginBottom="-4dp"
+        app:cardCornerRadius="30dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonMenuExpand"
+        app:layout_constraintEnd_toStartOf="@+id/buttonMenuExpand">
+
+        <ImageView
+            android:id="@+id/buttonSortIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/sort_svgrepo_com"
             android:tint="@color/orange_main" />
     </androidx.cardview.widget.CardView>
 
@@ -696,10 +792,18 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/microphone"
-                    android:tint="#FFFFFF" />
+                    app:tint="#FFFFFF" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/bottomExpandableMenuButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:constraint_referenced_ids="buttonDeleteAll,buttonDoneAll,buttonSearch,buttonSort,buttonMic"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
