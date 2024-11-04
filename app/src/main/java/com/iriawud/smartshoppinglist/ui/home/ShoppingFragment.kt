@@ -9,14 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
 import com.iriawud.smartshoppinglist.ui.ShoppingUtils
 
 
 class ShoppingFragment : Fragment() {
+    //setup adapter and view model
     private lateinit var adapter: ShoppingAdapter
     private lateinit var viewModel: ShoppingViewModel
 
+    //view for empty recycler view
+    private lateinit var emptyShoppingListView : View
+
+    //setup binding and other variables
     private var _binding: FragmentShoppingBinding? = null
     private val binding get() = _binding!!
     private var isInputBarExpanded: Boolean = false
@@ -41,6 +47,11 @@ class ShoppingFragment : Fragment() {
         viewModel.items.observe(viewLifecycleOwner, { updatedList ->
             adapter.updateItems(updatedList)
         })
+
+        viewModel.items.observe(viewLifecycleOwner) { items ->
+            adapter.updateItems(items)
+            updateEmptyStateView()
+        }
 
         // Setup swipe functionality using the ShoppingCardSwiper class
         val swipeHandler = ShoppingCardSwiper(
@@ -94,6 +105,17 @@ class ShoppingFragment : Fragment() {
                 binding.bottomExpandableMenuButtons,
                 isBottomMenuExpanded
             )
+        }
+    }
+
+    private fun updateEmptyStateView() {
+        val emptyStateView = binding.root.findViewById<View>(R.id.emptyStateView)
+        if (viewModel.isItemListEmpty()) {
+            emptyStateView.visibility = View.VISIBLE
+            binding.shoppingRecyclerView.visibility = View.GONE
+        } else {
+            emptyStateView.visibility = View.GONE
+            binding.shoppingRecyclerView.visibility = View.VISIBLE
         }
     }
 

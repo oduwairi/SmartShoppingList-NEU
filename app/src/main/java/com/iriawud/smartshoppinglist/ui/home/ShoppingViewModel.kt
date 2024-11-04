@@ -36,4 +36,8 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     fun markItemAsDone(item: ShoppingItem) {
         // Update the item's status in the repository
     }
+
+    fun isItemListEmpty(): Boolean {
+        return _items.value.isNullOrEmpty()
+    }
 }

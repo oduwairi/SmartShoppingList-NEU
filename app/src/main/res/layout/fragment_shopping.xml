@@ -230,6 +230,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextNewItem" />
 
+    <include
+        android:id="@+id/emptyStateView"
+        layout="@layout/empty_shopping_list"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/inputBar"
         android:layout_width="match_parent"
