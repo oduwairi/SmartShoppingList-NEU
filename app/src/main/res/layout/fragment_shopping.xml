@@ -150,6 +150,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
+        app:cardBackgroundColor="#CA5F3B"
         app:cardCornerRadius="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topActionBarShopping">
@@ -159,7 +160,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/plus_svgrepo_com"
-            android:tint="@color/orange_main" />
+            android:tint="@color/white_items" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -249,7 +250,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/expandableCardInputs"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="1dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="1dp"
@@ -416,7 +417,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/quantityUnitEditCard"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="35dp"
                     android:layout_marginStart="10dp"
                     app:cardCornerRadius="6dp"
                     app:layout_constraintBottom_toBottomOf="@id/quantityEditCard"
@@ -426,8 +427,8 @@
 
                     <Spinner
                         android:id="@+id/quantityUnitSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:spinnerMode="dropdown" />
 
                 </androidx.cardview.widget.CardView>
@@ -529,23 +530,18 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/priorityCard"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="7dp"
                     app:cardCornerRadius="6dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/priorityText">>
+                    app:layout_constraintTop_toBottomOf="@id/priorityText">
 
-                    <EditText
-                        android:id="@+id/priorityEditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:ems="5"
-                        android:hint="Priority"
-                        android:inputType="number"
-                        android:padding="5dp"
-                        android:textColorHint="@color/hint_text" />
+                    <Spinner
+                        android:id="@+id/prioritySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:spinnerMode="dropdown" />
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
@@ -654,23 +650,19 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/frequencyUnitEditCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
                     android:layout_marginStart="10dp"
                     app:cardCornerRadius="6dp"
+                    app:layout_constraintEnd_toEndOf="@id/quantityUnitEditCard"
                     app:layout_constraintStart_toEndOf="@id/frequencyCard"
                     app:layout_constraintTop_toTopOf="@id/frequencyCard">
 
-                    <EditText
-                        android:id="@+id/frequencyUnitEditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:ems="4"
-                        android:hint="Unit "
-                        android:inputType="text"
-                        android:padding="5dp"
-                        android:textColorHint="@color/hint_text" />
+                    <Spinner
+                        android:id="@+id/frequencyUnitSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:spinnerMode="dropdown" />
                 </androidx.cardview.widget.CardView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

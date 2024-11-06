@@ -20,6 +20,7 @@ class InventoryFragment : Fragment() {
 
     private var isInputBarExpanded: Boolean = false
     private var isBottomMenuExpanded: Boolean = false
+    private var selectedCategory = "Uncategorized"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -57,6 +58,7 @@ class InventoryFragment : Fragment() {
                 binding.costEditText.text.toString().trim(),
                 binding.costUnitEditText.text.toString().trim(),
                 binding.prioritySlider.value.toInt(),
+                selectedCategory,
                 viewModel,
                 listOf(
                     binding.editTextNewItemInventory,

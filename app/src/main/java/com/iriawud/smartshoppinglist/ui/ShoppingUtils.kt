@@ -1,10 +1,14 @@
 package com.iriawud.smartshoppinglist.ui
 
+import android.R
 import android.animation.ValueAnimator
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
@@ -19,7 +23,8 @@ object ShoppingUtils {
         newItemCost: String,
         newItemCostUnit: String,
         newItemPriority: Int,
-        viewModel: ItemViewModel, // Replace with your actual ViewModel type
+        newItemCategory: String,
+        viewModel: ItemViewModel,
         fieldsToClear: List<EditText>,
         prioritySlider: Slider,
         expandableCard: ViewGroup,
@@ -30,10 +35,10 @@ object ShoppingUtils {
             val newItem = ShoppingItem(
                 name = newItemName,
                 quantity = "$newItemQuantity $newItemQuantityUnit",
-                category = "Uncategorized",
+                category = newItemCategory,
                 price = "$newItemCost $newItemCostUnit",
                 priority = newItemPriority,
-                imageUrl = newItemName.lowercase()
+                imageUrl = newItemName.lowercase(),
             )
 
             viewModel.addItem(newItem)
@@ -114,9 +119,64 @@ object ShoppingUtils {
         }
     }
 
+    fun setupDropdownMenus(
+        context: Context,
+        quantityUnitSpinner: Spinner,
+        prioritySpinner: Spinner,
+        prioritySlider: Slider,
+        frequencyUnitSpinner: Spinner
+    ) {
+        // List of units
+        val units = listOf("kg", "lbs", "oz", "pcs", "l", "gal", "pack", "dozen")
+        val adapterUnits = ArrayAdapter(context, R.layout.simple_spinner_item, units)
+        adapterUnits.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        quantityUnitSpinner.adapter = adapterUnits
+
+        // Define priority values
+        val priorityValues = mapOf("Low" to 3, "Medium" to 5, "High" to 8)
+        // List of priority labels
+        val priorities = listOf("Low", "Medium", "High")
+        // Adapter for the Priority Spinner
+        val adapterPriorities =
+            ArrayAdapter(context, R.layout.simple_spinner_item, priorities)
+        adapterPriorities.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        prioritySpinner.adapter = adapterPriorities
+
+        // Set listener on Priority Spinner to update the Slider
+        prioritySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedPriority = priorities[position]
+                val sliderValue = priorityValues[selectedPriority] ?: 5
+                prioritySlider.value = sliderValue.toFloat()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        // Set listener on Slider to update the Priority Spinner
+        prioritySlider.addOnChangeListener { slider, value, fromUser ->
+            val closestPriority =
+                priorityValues.entries.minByOrNull { Math.abs(it.value - value.toInt()) }?.key
+            val spinnerPosition = priorities.indexOf(closestPriority)
+            if (spinnerPosition >= 0 && spinnerPosition != prioritySpinner.selectedItemPosition) {
+                prioritySpinner.setSelection(spinnerPosition)
+            }
+        }
+
+        // List of frequency units
+        val frequencies = listOf("Day", "Week", "Month")
+        val adapterFrequencies =
+            ArrayAdapter(context, R.layout.simple_spinner_item, frequencies)
+        adapterFrequencies.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        frequencyUnitSpinner.adapter = adapterFrequencies
+    }
+
     private fun dpToPx(dp: Float, context: Context): Int {
         return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / 160f)).toInt()
     }
-
-
 }

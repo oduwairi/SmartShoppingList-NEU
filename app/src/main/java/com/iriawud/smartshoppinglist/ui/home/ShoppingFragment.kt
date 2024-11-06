@@ -1,19 +1,16 @@
 package com.iriawud.smartshoppinglist.ui.home
 
-import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
+import com.iriawud.smartshoppinglist.ui.CategorySelectionDialog
 import com.iriawud.smartshoppinglist.ui.ShoppingUtils
 
 
@@ -22,14 +19,12 @@ class ShoppingFragment : Fragment() {
     private lateinit var adapter: ShoppingAdapter
     private lateinit var viewModel: ShoppingViewModel
 
-    //view for empty recycler view
-    private lateinit var emptyShoppingListView : View
-
     //setup binding and other variables
     private var _binding: FragmentShoppingBinding? = null
     private val binding get() = _binding!!
     private var isInputBarExpanded: Boolean = false
     private var isBottomMenuExpanded: Boolean = false
+    private var selectedCategory: String = "Uncategorized"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -40,14 +35,6 @@ class ShoppingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // List of units
-        val units = listOf("kg", "lbs", "oz", "pcs", "l", "gal", "pack", "dozen")
-        val adapterUnits = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, units)
-        adapterUnits.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        // Set up the Spinner
-        val quantityUnitSpinner: Spinner = view.findViewById(R.id.quantityUnitSpinner)
-        quantityUnitSpinner.adapter = adapterUnits
 
         viewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
 
@@ -90,6 +77,7 @@ class ShoppingFragment : Fragment() {
                 binding.costEditText.text.toString().trim(),
                 binding.costUnitEditText.text.toString().trim(),
                 binding.prioritySlider.value.toInt(),
+                selectedCategory,
                 viewModel,
                 listOf(
                     binding.editTextNewItem,
@@ -105,6 +93,14 @@ class ShoppingFragment : Fragment() {
         }
 
         binding.buttonItemDetails.setOnClickListener {
+            ShoppingUtils.setupDropdownMenus(
+                context = requireContext(),
+                quantityUnitSpinner = binding.quantityUnitSpinner,
+                prioritySpinner = binding.prioritySpinner,
+                prioritySlider = binding.prioritySlider,
+                frequencyUnitSpinner = binding.frequencyUnitSpinner
+            )
+
             isInputBarExpanded = ShoppingUtils.toggleExpandableDetailsCard(
                 binding.expandableCardInputs,
                 requireContext(),
@@ -118,6 +114,13 @@ class ShoppingFragment : Fragment() {
                 binding.bottomExpandableMenuButtons,
                 isBottomMenuExpanded
             )
+        }
+
+        binding.setCategoryCard.setOnClickListener {
+            val dialog = CategorySelectionDialog { selectedCategory ->
+                this.selectedCategory = selectedCategory
+            }
+            dialog.show(childFragmentManager, "CategorySelectionDialog")
         }
     }
 
