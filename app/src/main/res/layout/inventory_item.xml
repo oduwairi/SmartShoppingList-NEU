@@ -46,8 +46,8 @@
                 android:text="Time left : 3 days"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@id/inventoryAmountLeftText"
-                app:layout_constraintTop_toBottomOf="@id/inventoryAmountLeftText" />
+                app:layout_constraintStart_toStartOf="@id/inventoryItemPriority"
+                app:layout_constraintTop_toBottomOf="@id/inventoryItemPriority" />
 
             <TextView
                 android:id="@+id/inventoryDateAddedText"
@@ -63,12 +63,12 @@
                 app:layout_constraintTop_toBottomOf="@id/inventoryItemImage" />
 
             <TextView
-                android:id="@+id/inventoryAmountLeftText"
+                android:id="@+id/inventoryItemPriority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/albert_sans"
-                android:text="Amount : 12 pcs"
+                android:text="Priority : High"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@id/inventoryDateAddedText"

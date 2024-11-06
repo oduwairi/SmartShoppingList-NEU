@@ -1,11 +1,16 @@
 package com.iriawud.smartshoppinglist.ui.home
 
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.iriawud.smartshoppinglist.R
 
-enum class PriorityColor(val colorRes: Int) {
-    LOW(R.color.priority_low),       // Assume colorLowPriority is defined in colors.xml
-    MEDIUM(R.color.priority_medium), // Assume colorMediumPriority is defined in colors.xml
-    HIGH(R.color.priority_high);     // Assume colorHighPriority is defined in colors.xml
+enum class PriorityColor(val colorRes: Int, val label: String) {
+    LOW(R.color.priority_low, "Low"),
+    MEDIUM(R.color.priority_medium, "Medium"),
+    HIGH(R.color.priority_high, "High");
 
     companion object {
         fun from(priority: Int): PriorityColor {
@@ -13,8 +18,24 @@ enum class PriorityColor(val colorRes: Int) {
                 in 1..3 -> LOW
                 in 4..7 -> MEDIUM
                 in 8..10 -> HIGH
-                else -> LOW  // Default or consider throwing an exception if invalid
+                else -> LOW // Default or handle invalid values
             }
         }
+    }
+
+    // Method to set the priority text with color
+    fun applyToTextView(textView: TextView) {
+        val fullText = "Priority: $label"
+        val spannable = SpannableString(fullText)
+        val startIndex = fullText.indexOf(label)
+
+        spannable.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(textView.context, colorRes)),
+            startIndex,
+            startIndex + label.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        textView.text = spannable
     }
 }

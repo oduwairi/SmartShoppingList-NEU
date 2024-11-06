@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.iriawud.smartshoppinglist.ui.ItemViewModel
+import com.iriawud.smartshoppinglist.ui.dashboard.InventoryViewModel
 
 class ShoppingViewModel : ViewModel(), ItemViewModel {
     private val _items = MutableLiveData<MutableList<ShoppingItem>>()
@@ -33,6 +34,9 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     }
 
     fun markItemAsDone(item: ShoppingItem) {
-        // Update the item's status in the repository
+        _items.value?.let {
+            it.remove(item)
+            _items.value = it // Trigger LiveData update
+        }
     }
 }

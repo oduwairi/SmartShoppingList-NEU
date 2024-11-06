@@ -20,5 +20,6 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
             it.add(item)
             _items.value = it // Trigger LiveData update
         }
+
     }
 }

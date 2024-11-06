@@ -19,7 +19,7 @@ class ShoppingCardSwiper(
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     private val deleteIcon: Drawable? = ContextCompat.getDrawable(context, R.drawable.delete)
-    private val doneIcon: Drawable? = ContextCompat.getDrawable(context, R.drawable.tick_checkbox_svgrepo_com)
+    private val doneIcon: Drawable? = ContextCompat.getDrawable(context, R.drawable.tick_circle_svgrepo_com)
     private val iconSize = 100 // Size of the icons (in pixels)
     private val textPaint = Paint().apply {
         color = ContextCompat.getColor(context, android.R.color.black)

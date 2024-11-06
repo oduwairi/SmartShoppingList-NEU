@@ -35,14 +35,20 @@ object ShoppingUtils {
         if (newItemName.isNotBlank()) {
             val newItem = ShoppingItem(
                 name = newItemName,
-                quantity = "$newItemQuantity $newItemQuantityUnit",
+                quantity = if (newItemQuantity.isNotBlank() && newItemQuantityUnit.isNotBlank())
+                    "$newItemQuantity $newItemQuantityUnit"
+                else "1 pcs", // Default quantity
                 category = newItemCategory,
-                price = "$newItemCost $newItemCostUnit",
-                priority = newItemPriority,
+                price = if (newItemCost.isNotBlank() && newItemCostUnit.isNotBlank())
+                    "$newItemCost $newItemCostUnit"
+                else "Not set",
+                priority = if (newItemPriority in 1..10)
+                    newItemPriority
+                else 5, // Default priority
                 imageUrl = newItemName.lowercase(),
                 frequency = if (!newItemFrequency.isNullOrBlank() && !newItemFrequencyUnit.isNullOrBlank())
                     "$newItemFrequency per $newItemFrequencyUnit"
-                else "1 per week"
+                else "Not set"
             )
 
             viewModel.addItem(newItem)
