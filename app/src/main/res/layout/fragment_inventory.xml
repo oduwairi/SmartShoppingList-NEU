@@ -202,7 +202,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/expandableCardInputs"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="1dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="1dp"
@@ -221,74 +221,106 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/remainingQuantityText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="21dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/albert_sans"
-                    android:text="Remaining"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/quantityEditCard" />
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/prioritySlider"
+                    style="@style/Widget.MaterialComponents.Slider"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:stepSize="1"
+                    android:value="5"
+                    android:valueFrom="1"
+                    android:valueTo="10"
+                    app:layout_constraintEnd_toEndOf="@id/quantityUnitEditCard"
+                    app:layout_constraintStart_toEndOf="@id/priorityCard"
+                    app:layout_constraintTop_toBottomOf="@id/priorityText" />
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/setStoreCard"
-                    android:layout_width="100dp"
+                    android:id="@+id/priorityCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="7dp"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/priorityText">
+
+                    <Spinner
+                        android:id="@+id/prioritySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:spinnerMode="dropdown" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/quantityUnitEditCard"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="10dp"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintBottom_toBottomOf="@id/quantityEditCard"
+                    app:layout_constraintStart_toEndOf="@id/quantityEditCard"
+                    app:layout_constraintTop_toTopOf="@id/quantityEditCard">
+
+                    <Spinner
+                        android:id="@+id/quantityUnitSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:spinnerMode="dropdown" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/quantityEditCard"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    app:cardCornerRadius="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/setCategoryCard"
-                    app:layout_constraintStart_toEndOf="@id/setImageCard"
-                    app:layout_constraintTop_toTopOf="@id/setImageCard">
+                    android:layout_marginTop="75dp"
+                    app:cardCornerRadius="6dp"
+                    app:layout_constraintEnd_toEndOf="@id/priorityCard"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">>
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/setStoreText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginEnd="5dp"
-                            android:text="Set Expiry"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/setStoreIcon" />
-
-                        <ImageView
-                            android:id="@+id/setStoreIcon"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:padding="5dp"
-                            android:src="@drawable/expired_svgrepo_com"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
+                    <EditText
+                        android:id="@+id/quantityEditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="7"
+                        android:hint="Quantity"
+                        android:inputType="numberDecimal"
+                        android:padding="5dp"
+                        android:textColorHint="@color/hint_text" />
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/setCategoryCard"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="20dp"
                     app:cardCornerRadius="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/setImageCard">
+                    app:layout_constraintTop_toBottomOf="@id/costEditCard">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/currentCategoryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_marginEnd="3dp"
+                            android:fontFamily="@font/albert_sans_bold"
+                            android:gravity="center"
+                            android:text="Uncategorized"
+                            android:textColor="@color/orange_main"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/setCategoryText" />
 
                         <TextView
                             android:id="@+id/setCategoryText"
@@ -324,11 +356,24 @@
                     app:cardCornerRadius="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/costEditCard">
+                    app:layout_constraintTop_toBottomOf="@id/costEditCard">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/currentImageText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_marginEnd="3dp"
+                            android:fontFamily="@font/albert_sans_bold"
+                            android:text="Default"
+                            android:textColor="@color/orange_main"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/textView3" />
 
                         <TextView
                             android:id="@+id/textView3"
@@ -354,13 +399,82 @@
 
                 </androidx.cardview.widget.CardView>
 
+                <TextView
+                    android:id="@+id/remainingQuantityText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/albert_sans"
+                    android:text="Remaining%"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/quantityEditCard" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/setExpiryCard"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="20dp"
+                    app:cardCornerRadius="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/setCategoryCard"
+                    app:layout_constraintStart_toEndOf="@+id/setImageCard"
+                    app:layout_constraintTop_toBottomOf="@+id/costUnitEditCard">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/ExpiryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_marginEnd="3dp"
+                            android:fontFamily="@font/albert_sans_bold"
+                            android:text="No Expiry"
+                            android:textColor="@color/orange_main"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/setStoreText" />
+
+                        <TextView
+                            android:id="@+id/setStoreText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:text="Set Expiry"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/setStoreIcon" />
+
+                        <ImageView
+                            android:id="@+id/setStoreIcon"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:padding="5dp"
+                            android:src="@drawable/expired_svgrepo_com"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
                 <RadioGroup
                     android:id="@+id/priorityRadioGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="-6dp"
                     android:orientation="horizontal"
                     app:layout_constraintStart_toStartOf="@id/quantityRadioGroup"
-                    app:layout_constraintTop_toTopOf="@id/prioritySlider">
+                    app:layout_constraintTop_toTopOf="@id/priorityCard">
 
                     <RadioButton
                         android:id="@+id/fillRadioPriority"
@@ -375,50 +489,6 @@
                         android:layout_height="wrap_content"
                         android:text="Auto" />
                 </RadioGroup>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/quantityUnitEditCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="75dp"
-                    app:cardCornerRadius="6dp"
-                    app:layout_constraintStart_toEndOf="@id/quantityEditCard"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <EditText
-                        android:id="@+id/quantityUnitEditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:ems="4"
-                        android:hint="Unit "
-                        android:inputType="text"
-                        android:padding="5dp"
-                        android:textColorHint="@color/hint_text" />
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/quantityEditCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="75dp"
-                    app:cardCornerRadius="6dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">>
-
-                    <EditText
-                        android:id="@+id/quantityEditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:ems="7"
-                        android:hint="Quantity"
-                        android:inputType="number"
-                        android:padding="5dp"
-                        android:textColorHint="@color/hint_text" />
-                </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/priorityText"
@@ -459,7 +529,7 @@
                     style="@style/Widget.MaterialComponents.Slider"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="-13dp"
                     android:layout_marginEnd="130dp"
                     android:stepSize="10"
@@ -470,28 +540,15 @@
                     app:layout_constraintStart_toEndOf="@id/remainingQuantityText"
                     app:layout_constraintTop_toTopOf="@id/remainingQuantityText" />
 
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/prioritySlider"
-                    style="@style/Widget.MaterialComponents.Slider"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="130dp"
-                    android:stepSize="1"
-                    android:value="5"
-                    android:valueFrom="1"
-                    android:valueTo="10"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/priorityCard"
-                    app:layout_constraintTop_toBottomOf="@id/priorityText" />
-
                 <RadioGroup
                     android:id="@+id/quantityRadioGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-7dp"
+                    android:layout_marginTop="-6dp"
+                    android:layout_marginEnd="7dp"
                     android:orientation="horizontal"
-                    app:layout_constraintStart_toEndOf="@id/quantityUnitEditCard"
-                    app:layout_constraintTop_toTopOf="@id/quantityUnitEditCard">
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/quantityEditCard">
 
                     <RadioButton
                         android:id="@+id/fillRadioQuantity"
@@ -508,33 +565,12 @@
                 </RadioGroup>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/priorityCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="7dp"
-                    app:cardCornerRadius="6dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/priorityText">>
-
-                    <EditText
-                        android:id="@+id/priorityEditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:ems="5"
-                        android:hint="Priority"
-                        android:inputType="number"
-                        android:padding="5dp"
-                        android:textColorHint="@color/hint_text" />
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
                     android:id="@+id/costEditCard"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     app:cardCornerRadius="6dp"
+                    app:layout_constraintEnd_toEndOf="@id/quantityEditCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/costText">>
 
@@ -589,7 +625,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="21dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="10dp"
                     android:fontFamily="@font/albert_sans_bold"
                     android:text="Cost"
                     android:textColor="@color/black"

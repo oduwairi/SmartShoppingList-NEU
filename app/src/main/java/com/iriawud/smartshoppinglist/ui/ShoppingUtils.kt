@@ -13,7 +13,6 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
 import com.iriawud.smartshoppinglist.ui.home.ShoppingItem
-import com.iriawud.smartshoppinglist.ui.home.ShoppingViewModel
 
 object ShoppingUtils {
     fun addItem(
@@ -24,6 +23,8 @@ object ShoppingUtils {
         newItemCostUnit: String,
         newItemPriority: Int,
         newItemCategory: String,
+        newItemFrequency: String?,
+        newItemFrequencyUnit: String?,
         viewModel: ItemViewModel,
         fieldsToClear: List<EditText>,
         prioritySlider: Slider,
@@ -39,6 +40,9 @@ object ShoppingUtils {
                 price = "$newItemCost $newItemCostUnit",
                 priority = newItemPriority,
                 imageUrl = newItemName.lowercase(),
+                frequency = if (!newItemFrequency.isNullOrBlank() && !newItemFrequencyUnit.isNullOrBlank())
+                    "$newItemFrequency per $newItemFrequencyUnit"
+                else "1 per week"
             )
 
             viewModel.addItem(newItem)
@@ -49,34 +53,35 @@ object ShoppingUtils {
 
             // Toggle expandable details card if needed
             if (isInputBarExpanded) {
-                toggleExpandableDetailsCard(expandableCard, context, isInputBarExpanded)
+                toggleExpandableDetailsCard(expandableCard, context, true)
                 return true
             }
         }
         return false
     }
 
+
     fun toggleExpandableMenuButtons(
-        ExpandableBottomMenu: CardView,
-        ExpandableBottomMenuButtons: View,
+        expandableBottomMenu: CardView,
+        expandableBottomMenuButtons: View,
         isBottomMenuExpanded: Boolean
     ): Boolean {
         if (!isBottomMenuExpanded) {
-            ExpandableBottomMenu.animate()
+            expandableBottomMenu.animate()
                 .scaleX(1.1f)  // Scale 10% larger in X direction
                 .scaleY(1.1f)  // Scale 10% larger in Y direction
                 .setDuration(100)  // Duration for the expand effect
                 .start()
 
-            ExpandableBottomMenuButtons.visibility = View.VISIBLE
+            expandableBottomMenuButtons.visibility = View.VISIBLE
         } else {
-            ExpandableBottomMenu.animate()
+            expandableBottomMenu.animate()
                 .scaleX(1.0f)  // Return to original X size
                 .scaleY(1.0f)  // Return to original Y size
                 .setDuration(100)  // Duration for the collapse effect
                 .start()
 
-            ExpandableBottomMenuButtons.visibility = View.GONE
+            expandableBottomMenuButtons.visibility = View.GONE
         }
         return !isBottomMenuExpanded
     }
@@ -124,10 +129,10 @@ object ShoppingUtils {
         quantityUnitSpinner: Spinner,
         prioritySpinner: Spinner,
         prioritySlider: Slider,
-        frequencyUnitSpinner: Spinner
+        frequencyUnitSpinner: Spinner? = null // Make this parameter nullable
     ) {
         // List of units
-        val units = listOf("kg", "lbs", "oz", "pcs", "l", "gal", "pack", "dozen")
+        val units = listOf("kg", "lbs", "oz", "pcs", "lt", "gal", "pack", "dozen")
         val adapterUnits = ArrayAdapter(context, R.layout.simple_spinner_item, units)
         adapterUnits.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         quantityUnitSpinner.adapter = adapterUnits
@@ -168,12 +173,15 @@ object ShoppingUtils {
             }
         }
 
-        // List of frequency units
-        val frequencies = listOf("Day", "Week", "Month")
-        val adapterFrequencies =
-            ArrayAdapter(context, R.layout.simple_spinner_item, frequencies)
-        adapterFrequencies.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        frequencyUnitSpinner.adapter = adapterFrequencies
+        // Only set up the frequency spinner if it's provided
+        frequencyUnitSpinner?.let {
+            // List of frequency units
+            val frequencies = listOf("Day", "Week", "Month")
+            val adapterFrequencies =
+                ArrayAdapter(context, R.layout.simple_spinner_item, frequencies)
+            adapterFrequencies.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+            it.adapter = adapterFrequencies
+        }
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

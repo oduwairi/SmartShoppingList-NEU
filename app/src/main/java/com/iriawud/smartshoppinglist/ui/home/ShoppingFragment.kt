@@ -24,7 +24,6 @@ class ShoppingFragment : Fragment() {
     private val binding get() = _binding!!
     private var isInputBarExpanded: Boolean = false
     private var isBottomMenuExpanded: Boolean = false
-    private var selectedCategory: String = "Uncategorized"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -77,13 +76,16 @@ class ShoppingFragment : Fragment() {
                 binding.costEditText.text.toString().trim(),
                 binding.costUnitEditText.text.toString().trim(),
                 binding.prioritySlider.value.toInt(),
-                selectedCategory,
+                binding.currentCategoryText.text.toString().trim(),
+                binding.frequencyEditText.text.toString().trim(),
+                binding.frequencyUnitSpinner.selectedItem.toString().trim(),
                 viewModel,
                 listOf(
                     binding.editTextNewItem,
                     binding.quantityEditText,
                     binding.costEditText,
-                    binding.costUnitEditText
+                    binding.costUnitEditText,
+                    binding.frequencyEditText,
                 ),
                 binding.prioritySlider,
                 binding.expandableCardInputs,
@@ -118,7 +120,7 @@ class ShoppingFragment : Fragment() {
 
         binding.setCategoryCard.setOnClickListener {
             val dialog = CategorySelectionDialog { selectedCategory ->
-                this.selectedCategory = selectedCategory
+                binding.currentCategoryText.text = selectedCategory
             }
             dialog.show(childFragmentManager, "CategorySelectionDialog")
         }

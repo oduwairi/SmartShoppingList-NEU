@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentInventoryBinding
+import com.iriawud.smartshoppinglist.ui.CategorySelectionDialog
 import com.iriawud.smartshoppinglist.ui.ShoppingUtils
 
 class InventoryFragment : Fragment() {
@@ -20,7 +21,6 @@ class InventoryFragment : Fragment() {
 
     private var isInputBarExpanded: Boolean = false
     private var isBottomMenuExpanded: Boolean = false
-    private var selectedCategory = "Uncategorized"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -54,11 +54,13 @@ class InventoryFragment : Fragment() {
             ShoppingUtils.addItem(
                 binding.editTextNewItemInventory.text.toString().trim(),
                 binding.quantityEditText.text.toString().trim(),
-                binding.quantityUnitEditText.text.toString().trim(),
+                binding.quantityUnitSpinner.selectedItem.toString().trim(),
                 binding.costEditText.text.toString().trim(),
                 binding.costUnitEditText.text.toString().trim(),
                 binding.prioritySlider.value.toInt(),
-                selectedCategory,
+                binding.currentCategoryText.text.toString().trim(),
+                null,
+                null,
                 viewModel,
                 listOf(
                     binding.editTextNewItemInventory,
@@ -74,6 +76,14 @@ class InventoryFragment : Fragment() {
         }
 
         binding.buttonItemDetails.setOnClickListener {
+            ShoppingUtils.setupDropdownMenus(
+                context = requireContext(),
+                quantityUnitSpinner = binding.quantityUnitSpinner,
+                prioritySpinner = binding.prioritySpinner,
+                prioritySlider = binding.prioritySlider,
+                frequencyUnitSpinner = null
+            )
+
             isInputBarExpanded = ShoppingUtils.toggleExpandableDetailsCard(
                 binding.expandableCardInputs,
                 requireContext(),
@@ -87,6 +97,13 @@ class InventoryFragment : Fragment() {
                 binding.bottomExpandableMenuButtons,
                 isBottomMenuExpanded
             )
+        }
+
+        binding.setCategoryCard.setOnClickListener {
+            val dialog = CategorySelectionDialog { selectedCategory ->
+                binding.currentCategoryText.text = selectedCategory
+            }
+            dialog.show(childFragmentManager, "CategorySelectionDialog")
         }
     }
 

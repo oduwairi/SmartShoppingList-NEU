@@ -288,6 +288,19 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/currentStoreText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_marginEnd="3dp"
+                            android:fontFamily="@font/albert_sans_bold"
+                            android:text="Not set"
+                            android:textColor="@color/orange_main"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/setStoreText" />
+
+                        <TextView
                             android:id="@+id/setStoreText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -328,6 +341,20 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/currentCategoryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_marginEnd="3dp"
+                            android:fontFamily="@font/albert_sans_bold"
+                            android:gravity="center"
+                            android:text="Uncategorized"
+                            android:textColor="@color/orange_main"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/setCategoryText" />
+
+                        <TextView
                             android:id="@+id/setCategoryText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -366,6 +393,19 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/currentImageText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:layout_marginEnd="3dp"
+                            android:fontFamily="@font/albert_sans_bold"
+                            android:text="Default"
+                            android:textColor="@color/orange_main"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/textView3" />
 
                         <TextView
                             android:id="@+id/textView3"
@@ -421,7 +461,6 @@
                     android:layout_marginStart="10dp"
                     app:cardCornerRadius="6dp"
                     app:layout_constraintBottom_toBottomOf="@id/quantityEditCard"
-                    app:layout_constraintEnd_toEndOf="@id/costUnitEditCard"
                     app:layout_constraintStart_toEndOf="@id/quantityEditCard"
                     app:layout_constraintTop_toTopOf="@id/quantityEditCard">
 
@@ -435,11 +474,12 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/quantityEditCard"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="75dp"
                     app:cardCornerRadius="6dp"
+                    app:layout_constraintEnd_toEndOf="@id/priorityCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">>
 
@@ -508,7 +548,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-7dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="7dp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/quantityUnitEditCard">
@@ -546,10 +586,11 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/costEditCard"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     app:cardCornerRadius="6dp"
+                    app:layout_constraintEnd_toEndOf="@id/quantityEditCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/costText">>
 
@@ -632,7 +673,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
                     app:cardCornerRadius="6dp"
-                    app:layout_constraintEnd_toEndOf="@id/costEditCard"
+                    app:layout_constraintEnd_toEndOf="@id/quantityEditCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/priorityCard">>
 
