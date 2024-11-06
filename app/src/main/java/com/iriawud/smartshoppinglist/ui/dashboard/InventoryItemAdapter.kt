@@ -52,6 +52,19 @@ class InventoryItemAdapter(private val items: List<ShoppingItem>) :
         //set time left based on frequency if applicable
         holder.itemTimeLeft.text = "Time left: ${item.getTimeLeft()}"
 
+        //set remaining quantity bar length and color
+        holder.itemAmountLeftIndicator.post {
+            val maxBarWidth = holder.itemAmountLeftIndicator.width // Max width of the CardView
+
+            // Calculate and set bar width
+            val layoutParams = holder.itemAmountLeftIndicator.layoutParams
+            layoutParams.width = item.getBarWidth(maxBarWidth)
+            holder.itemAmountLeftIndicator.layoutParams = layoutParams
+
+            // Set bar color
+            holder.itemAmountLeftIndicator.setCardBackgroundColor(item.getBarColor(holder.itemAmountLeftIndicator.context))
+        }
+
         //set item image in xml layout
         val context = holder.itemView.context
         val imageName = item.imageUrl

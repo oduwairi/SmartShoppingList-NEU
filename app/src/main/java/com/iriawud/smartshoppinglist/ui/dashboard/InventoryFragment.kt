@@ -39,11 +39,6 @@ class InventoryFragment : Fragment() {
         binding.inventoryRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.inventoryRecyclerView.adapter = adapter
 
-        //observe the items in the view model and update the adapter
-        viewModel.items.observe(viewLifecycleOwner) { updatedList ->
-            adapter.updateItems(updatedList)
-        }
-
         //observe the items in the view model and show empty state view if the list is empty
         viewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)

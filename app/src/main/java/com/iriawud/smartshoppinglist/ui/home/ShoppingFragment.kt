@@ -44,10 +44,6 @@ class ShoppingFragment : Fragment() {
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 
-        shoppingViewModel.items.observe(viewLifecycleOwner, { updatedList ->
-            adapter.updateItems(updatedList)
-        })
-
         shoppingViewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)
             ShoppingUtils.updateEmptyStateView(

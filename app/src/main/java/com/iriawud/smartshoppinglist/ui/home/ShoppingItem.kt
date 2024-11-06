@@ -1,5 +1,7 @@
 package com.iriawud.smartshoppinglist.ui.home
 
+import android.content.Context
+import com.iriawud.smartshoppinglist.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -45,8 +47,8 @@ data class ShoppingItem(
             val (amount, unit) = matchResult.destructured
             val frequencyInDays = when (unit.lowercase()) {
                 "day", "days" -> amount.toInt()
-                "week", "weeks" -> amount.toInt() * 7
-                "month", "months" -> amount.toInt() * 30 // Approximation
+                "week", "weeks" -> 7 / amount.toInt()
+                "month", "months" -> 30 / amount.toInt()
                 else -> return "Frequency not recognized"
             }
 
@@ -73,6 +75,54 @@ data class ShoppingItem(
             }
         } else {
             "Not set"
+        }
+    }
+
+    // Parse quantity as a numeric value
+    fun getFullQuantity(): Double {
+        return quantity.split(" ")[0].toDoubleOrNull() ?: 0.0
+    }
+
+    // Calculate the consumption rate (quantity per day)
+    fun getConsumptionRate(): Double {
+        val frequencyRegex = Regex("(\\d+) per (\\w+)")
+        val matchResult = frequencyRegex.matchEntire(frequency)
+        return if (matchResult != null) {
+            val (amount, unit) = matchResult.destructured
+            val frequencyInDays = when (unit.lowercase()) {
+                "day", "days" -> 1.0
+                "week", "weeks" -> 7.0
+                "month", "months" -> 30.0 // Approximation
+                else -> 1.0
+            }
+            getFullQuantity() * amount.toDouble() / (frequencyInDays)
+        } else {
+            0.0
+        }
+    }
+
+    // Calculate the remaining amount
+    fun getAmountLeft(): Double {
+        val daysPassed = getDaysPassed()
+        val consumptionRate = getConsumptionRate()
+        return (getFullQuantity() - (daysPassed * consumptionRate)).coerceAtLeast(0.0)
+    }
+
+    // Calculate bar width as a percentage of the max width
+    fun getBarWidth(maxBarWidth: Int): Int {
+        val amountLeft = getAmountLeft()
+        val fullQuantity = getFullQuantity()
+        return (maxBarWidth * (amountLeft / fullQuantity)).toInt().coerceAtLeast(0)
+    }
+
+    // Get bar color based on the amount left
+    fun getBarColor(context: Context): Int {
+        val amountLeft = getAmountLeft()
+        val fullQuantity = getFullQuantity()
+        return when {
+            amountLeft > fullQuantity * 0.5 -> context.getColor(R.color.amount_high) // More than 50% left
+            amountLeft > fullQuantity * 0.2 -> context.getColor(R.color.amount_medium) // 20-50% left
+            else -> context.getColor(R.color.amount_low) // Less than 20% left
         }
     }
 
