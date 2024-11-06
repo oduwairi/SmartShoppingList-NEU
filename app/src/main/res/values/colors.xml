@@ -7,4 +7,32 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="light_green_start">#90EE90</color>  <!-- Light Green -->
+    <color name="deep_green_end">#008000</color>     <!-- Darker Green -->
+    <color name="light_red_start">#FFC0CB</color>    <!-- Light Red -->
+    <color name="deep_red_end">#FF0000</color>       <!-- Darker Red -->
+
+    <!-- res/values/colors.xml -->
+    <color name="colorActivated">#CB5F3B</color>  <!-- Adjust this color for your active state -->
+    <color name="colorInactive">#000000 </color>  <!-- Adjust this color for your inactive state -->
+    <color name="colorTextActivated">#CB5F3B</color>
+    <color name="colorTextInactive">#000000</color>
+
+    <color name="orange_main">#CB5F3B</color>
+    <color name="white_items">#FBFCFF</color>
+    <color name="white_background">#F3F3F3</color>
+
+    <color name="hint_text">#CCD1D9</color>">
+
+    <color name="priority_high">#7FFF0000</color>">
+    <color name="priority_medium">#7FFADC00</color>">
+    <color name="priority_low">#7F0027D3</color>">
+
+    <color name="amount_high">#7F30DD04</color>">
+    <color name="amount_medium">#7FFADC00</color>">
+    <color name="amount_low">#7FDD1E04</color>">
+
+    <color name="bread_and_pastry">#96FFCD96</color>">"
+
 </resources>

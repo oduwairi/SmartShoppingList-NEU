@@ -9,17 +9,63 @@
         android:id="@+id/navigation_shopping"
         android:name="com.iriawud.smartshoppinglist.ui.home.ShoppingFragment"
         android:label="@string/title_shopping"
-        tools:layout="@layout/fragment_shopping" />
+        tools:layout="@layout/fragment_shopping" >
+        <action
+            android:id="@+id/action_shopping_to_inventory"
+            app:destination="@id/navigation_inventory"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_shopping_to_analytics"
+            app:destination="@id/navigation_analytics"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_inventory"
         android:name="com.iriawud.smartshoppinglist.ui.dashboard.InventoryFragment"
         android:label="@string/title_inventory"
-        tools:layout="@layout/fragment_inventory" />
+        tools:layout="@layout/fragment_inventory" >
+        <action
+            android:id="@+id/action_inventory_to_shopping"
+            app:destination="@id/navigation_shopping"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_inventory_to_analytics"
+            app:destination="@id/navigation_analytics"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_analytics"
         android:name="com.iriawud.smartshoppinglist.ui.notifications.AnalyticsFragment"
         android:label="@string/title_analytics"
-        tools:layout="@layout/fragment_analytics" />
+        tools:layout="@layout/fragment_analytics" >
+        <action
+            android:id="@+id/action_analytics_to_shopping"
+            app:destination="@id/navigation_shopping"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_analytics_to_inventory"
+            app:destination="@id/navigation_inventory"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
+
 </navigation>

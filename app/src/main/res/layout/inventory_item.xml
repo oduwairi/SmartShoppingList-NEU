@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/amountLeftIndicator"
+        android:layout_width="0dp"
+        android:layout_height="7dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:cardBackgroundColor="@color/amount_high"
+        app:cardCornerRadius="6dp"
+        app:layout_constraintEnd_toEndOf="@id/inventoryItemCard"
+        app:layout_constraintStart_toStartOf="@id/inventoryItemCard"
+        app:layout_constraintTop_toBottomOf="@id/inventoryItemCard" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/inventoryItemCard"
+        android:layout_width="160dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/bread_and_pastry"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/inventoryTimeLeftText"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/albert_sans"
+                android:text="Time left : 3 days"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/inventoryAmountLeftText"
+                app:layout_constraintTop_toBottomOf="@id/inventoryAmountLeftText" />
+
+            <TextView
+                android:id="@+id/inventoryDateAddedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/albert_sans"
+                android:text="Date added : 04/11/2024"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inventoryItemImage" />
+
+            <TextView
+                android:id="@+id/inventoryAmountLeftText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/albert_sans"
+                android:text="Amount : 12 pcs"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/inventoryDateAddedText"
+                app:layout_constraintTop_toBottomOf="@id/inventoryDateAddedText" />
+
+            <TextView
+                android:id="@+id/inventoryItemName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/albert_sans_bold"
+                android:maxLines="2"
+                android:text="Bread"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@id/inventoryItemImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/inventoryItemImage"
+                app:layout_constraintTop_toTopOf="@id/inventoryItemImage" />
+
+            <ImageView
+                android:id="@+id/inventoryItemImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/bread_svgrepo_com" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
