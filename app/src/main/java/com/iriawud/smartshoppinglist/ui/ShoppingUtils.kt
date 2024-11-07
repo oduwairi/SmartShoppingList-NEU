@@ -25,6 +25,7 @@ object ShoppingUtils {
         newItemCategory: String,
         newItemFrequency: String?,
         newItemFrequencyUnit: String?,
+        newItemAmountLeftPercentage: Int?,
         viewModel: ItemViewModel,
         fieldsToClear: List<EditText>,
         prioritySlider: Slider,
@@ -37,19 +38,21 @@ object ShoppingUtils {
                 name = newItemName,
                 quantity = if (newItemQuantity.isNotBlank() && newItemQuantityUnit.isNotBlank())
                     "$newItemQuantity $newItemQuantityUnit"
-                else "1 pcs", // Default quantity
+                else ShoppingItem().quantity, // Default quantity
                 category = newItemCategory,
                 price = if (newItemCost.isNotBlank() && newItemCostUnit.isNotBlank())
                     "$newItemCost $newItemCostUnit"
-                else "Not set",
-                priority = if (newItemPriority in 1..10)
-                    newItemPriority
-                else 5, // Default priority
+                else ShoppingItem().price,
+                priority = newItemPriority ?: ShoppingItem().priority, // Default priority
                 imageUrl = newItemName.lowercase(),
                 frequency = if (!newItemFrequency.isNullOrBlank() && !newItemFrequencyUnit.isNullOrBlank())
                     "$newItemFrequency per $newItemFrequencyUnit"
-                else "Not set"
+                else ShoppingItem().frequency,
             )
+            // Set explicit amount left percentage if provided
+            if (newItemAmountLeftPercentage != null) {
+                newItem.setExplicitAmountLeftPercent(newItemAmountLeftPercentage)
+            }
 
             viewModel.addItem(newItem)
 

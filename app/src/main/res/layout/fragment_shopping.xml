@@ -17,58 +17,95 @@
         app:layout_constraintBottom_toTopOf="@id/buttonMenuExpand"
         app:layout_constraintStart_toEndOf="@+id/buttonMenuExpand">
 
+        <TextView
+            android:id="@+id/searchText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/albert_sans_bold"
+            android:text="Search"
+            android:textColor="@color/orange_main"
+            android:textSize="12sp" />
+
         <ImageView
             android:id="@+id/buttonSearchIcon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="2dp"
             android:src="@drawable/search_svgrepo_com"
-            android:tint="@color/orange_main" />
+            app:tint="@color/orange_main" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/buttonDeleteAll"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="14dp"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="@id/buttonMenuExpand"
         app:layout_constraintEnd_toStartOf="@id/buttonMenuExpand"
         app:layout_constraintTop_toTopOf="@id/buttonMenuExpand">
 
+        <TextView
+            android:id="@+id/clearAllText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/albert_sans_bold"
+            android:text="Clear"
+            android:textColor="@color/orange_main"
+            android:textSize="12sp" />
+
         <ImageView
             android:id="@+id/buttonDeleteAllIcon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="4dp"
             android:src="@drawable/delete"
-            android:tint="#FD6A6A" />
+            app:tint="@color/orange_main" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/buttonDoneAll"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="14dp"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="@id/buttonMenuExpand"
         app:layout_constraintStart_toEndOf="@id/buttonMenuExpand"
         app:layout_constraintTop_toTopOf="@id/buttonMenuExpand">
 
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/albert_sans_bold"
+            android:text="Done"
+            android:textColor="@color/orange_main"
+            android:textSize="12sp" />
+
         <ImageView
             android:id="@+id/buttonDoneAllIcon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="4dp"
             android:src="@drawable/tick_circle_svgrepo_com"
-            android:tint="@color/light_green_start" />
+            app:tint="@color/orange_main" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/buttonMic"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="14dp"
+        android:backgroundTint="@color/orange_main"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toTopOf="@id/buttonMenuExpand"
         app:layout_constraintEnd_toEndOf="@id/buttonMenuExpand"
@@ -80,7 +117,7 @@
             android:layout_height="35dp"
             android:layout_gravity="center"
             android:src="@drawable/microphone"
-            android:tint="@color/orange_main" />
+            app:tint="@color/white_items" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -99,7 +136,7 @@
             android:layout_height="31dp"
             android:layout_gravity="center"
             android:src="@drawable/details_backup_svgrepo_com"
-            android:tint="@color/orange_main" />
+            app:tint="@color/orange_main" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -107,8 +144,9 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="75dp"
+        android:alpha="8"
         android:backgroundTint="@color/orange_main"
-        app:cardCornerRadius="30dp"
+        app:cardCornerRadius="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -122,26 +160,38 @@
             android:layout_margin="8dp"
             android:padding="4dp"
             android:src="@drawable/menu_navigation_grid_1529_svgrepo_com"
-            android:tint="@color/white_items" />
+            app:tint="@color/white_items" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/buttonSort"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="-4dp"
         android:layout_marginBottom="-4dp"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toTopOf="@id/buttonMenuExpand"
         app:layout_constraintEnd_toStartOf="@+id/buttonMenuExpand">
 
+        <TextView
+            android:id="@+id/sortText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/albert_sans_bold"
+            android:text="Sort"
+            android:textColor="@color/orange_main"
+            android:textSize="12sp" />
+
         <ImageView
             android:id="@+id/buttonSortIcon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="4dp"
             android:src="@drawable/sort_svgrepo_com"
-            android:tint="@color/orange_main" />
+            app:tint="@color/orange_main" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -160,7 +210,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/plus_svgrepo_com"
-            android:tint="@color/white_items" />
+            app:tint="@color/white_items" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -184,10 +234,10 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/menu_svgrepo_com"
-                android:tint="@color/white_items"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white_items" />
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -197,10 +247,10 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/user_svgrepo_com"
-                android:tint="@color/white_items"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white_items" />
 
             <TextView
                 android:id="@+id/textView"
@@ -225,6 +275,7 @@
         android:id="@+id/shoppingRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="42dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -478,6 +529,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="75dp"
+                    android:layout_marginEnd="1dp"
                     app:cardCornerRadius="6dp"
                     app:layout_constraintEnd_toEndOf="@id/priorityCard"
                     app:layout_constraintStart_toStartOf="parent"
@@ -502,7 +554,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="185dp"
                     android:fontFamily="@font/albert_sans_bold"
-                    android:text="Priority and frequency"
+                    android:text="Priority and buying frequency"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -634,7 +686,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="50dp"
                     android:fontFamily="@font/albert_sans_bold"
-                    android:text="Quantity and unit"
+                    android:text="Quantity to buy"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"

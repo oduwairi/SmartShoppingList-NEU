@@ -69,6 +69,7 @@ class InventoryFragment : Fragment() {
                 binding.currentCategoryText.text.toString().trim(),
                 null,
                 null,
+                binding.remaningQuantitySlider.value.toInt(),
                 viewModel,
                 listOf(
                     binding.editTextNewItemInventory,

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.fragment.app.DialogFragment
 import com.iriawud.smartshoppinglist.R
 
@@ -46,7 +47,7 @@ class CategorySelectionDialog(
             // Optionally set an icon
             val categoryIcon = itemView.findViewById<ImageView>(R.id.categoryIcon)
 
-            categoryText.setOnClickListener {
+            itemView.setOnClickListener {
                 onCategorySelected(category) // Call the callback with the selected category
                 dismiss() // Close the dialog after selection
             }

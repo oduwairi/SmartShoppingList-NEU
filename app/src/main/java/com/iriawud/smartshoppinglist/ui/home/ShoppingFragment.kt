@@ -89,6 +89,7 @@ class ShoppingFragment : Fragment() {
                 binding.currentCategoryText.text.toString().trim(),
                 binding.frequencyEditText.text.toString().trim(),
                 binding.frequencyUnitSpinner.selectedItem.toString().trim(),
+                null,
                 shoppingViewModel,
                 listOf(
                     binding.editTextNewItem,

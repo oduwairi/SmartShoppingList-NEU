@@ -1,20 +1,22 @@
 package com.iriawud.smartshoppinglist.ui.home
 
 import android.content.Context
+import android.health.connect.datatypes.units.Percentage
 import com.iriawud.smartshoppinglist.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 data class ShoppingItem(
-    val name: String,
-    val quantity: String = "1 pcs",
-    val category: String = "Uncategorized",
-    val price: String = "Not set",
-    val priority: Int = 5,
-    val imageUrl: String = name.lowercase(),
-    val frequency: String = "Not set",
-    val createdAt: String = getCurrentTimestamp() // Use a helper function to get the timestamp
+    val name: String = "Unknown",
+    var quantity: String = "1 pcs",
+    var category: String = "Uncategorized",
+    var price: String = "Not set",
+    var priority: Int = 5,
+    var imageUrl: String = name.lowercase(),
+    var frequency: String = "Not set",
+    var createdAt: String = getCurrentTimestamp(),
+    private var explicitAmountLeftPercent: Int? = null
 ) {
     companion object {
         fun getCurrentTimestamp(): String {
@@ -22,6 +24,31 @@ data class ShoppingItem(
             return dateFormat.format(Date())
         }
     }
+
+    // Compute the percentage of the amount left or use the explicitly provided value
+    val amountLeftPercent: Int
+        get() {
+            val startingPercent = explicitAmountLeftPercent ?: 100
+            return calculateDynamicPercentageLeft(startingPercent)
+        }
+
+    // Allow explicitly setting the remaining percentage
+    fun setExplicitAmountLeftPercent(value: Int?) {
+        explicitAmountLeftPercent = value?.coerceIn(0, 100) // Ensure the value is between 0 and 100
+    }
+
+    // Dynamically calculate the remaining percentage
+    private fun calculateDynamicPercentageLeft(startingPercent: Int): Int {
+        val daysPassed = getDaysPassed()
+        return try {
+            val frequencyInDays = getFrequencyInDays()
+            val percentReduction = (daysPassed / frequencyInDays * 100).toInt()
+            (startingPercent - percentReduction).coerceIn(0, 100)
+        } catch (e: IllegalArgumentException) {
+            startingPercent // Fallback to starting percent if frequency is invalid
+        }
+    }
+
 
     // Compute days passed since 'createdAt'
     fun getDaysPassed(): Int {
@@ -38,21 +65,9 @@ data class ShoppingItem(
     }
 
     fun getTimeLeft(): String {
-        val daysPassed = getDaysPassed()
-
-        // Parse frequency (e.g., "1 per week")
-        val frequencyRegex = Regex("(\\d+) per (\\w+)")
-        val matchResult = frequencyRegex.matchEntire(frequency)
-        return if (matchResult != null) {
-            val (amount, unit) = matchResult.destructured
-            val frequencyInDays = when (unit.lowercase()) {
-                "day", "days" -> amount.toInt()
-                "week", "weeks" -> 7 / amount.toInt()
-                "month", "months" -> 30 / amount.toInt()
-                else -> return "Frequency not recognized"
-            }
-
-            val daysLeft = frequencyInDays - daysPassed
+        return try {
+            val frequencyInDays = getFrequencyInDays()
+            val daysLeft = ((amountLeftPercent / 100.0) * frequencyInDays).toInt()
 
             // Convert daysLeft to appropriate time unit
             when {
@@ -73,8 +88,26 @@ data class ShoppingItem(
                 }
                 else -> "Due today"
             }
+        } catch (e: IllegalArgumentException) {
+            e.message ?: "Error calculating time left"
+        }
+    }
+
+
+    fun getFrequencyInDays(): Double {
+        val frequencyRegex = Regex("(\\d+) per (\\w+)")
+        val matchResult = frequencyRegex.matchEntire(frequency)
+
+        return if (matchResult != null) {
+            val (amount, unit) = matchResult.destructured
+            when (unit.lowercase()) {
+                "day", "days" -> 1.0 / amount.toDouble() // X per day
+                "week", "weeks" -> 7.0 / amount.toDouble() // X per week
+                "month", "months" -> 30.0 / amount.toDouble() // X per month
+                else -> throw IllegalArgumentException("Frequency format not recognized")
+            }
         } else {
-            "Not set"
+            throw IllegalArgumentException("Not set")
         }
     }
 
@@ -110,23 +143,21 @@ data class ShoppingItem(
 
     // Calculate bar width as a percentage of the max width
     fun getBarWidth(maxBarWidth: Int): Int {
-        val amountLeft = getAmountLeft()
-        val fullQuantity = getFullQuantity()
-        return (maxBarWidth * (amountLeft / fullQuantity)).toInt().coerceAtLeast(0)
+        // Use amountLeftPercent (explicit or calculated)
+        val barWidth = maxBarWidth * amountLeftPercent / 100
+        return barWidth.coerceAtLeast(0) // Ensure width is not negative
     }
+
 
     // Get bar color based on the amount left
     fun getBarColor(context: Context): Int {
-        val amountLeft = getAmountLeft()
-        val fullQuantity = getFullQuantity()
+        // Use amountLeftPercent (explicit or calculated)
         return when {
-            amountLeft > fullQuantity * 0.5 -> context.getColor(R.color.amount_high) // More than 50% left
-            amountLeft > fullQuantity * 0.2 -> context.getColor(R.color.amount_medium) // 20-50% left
+            amountLeftPercent > 50 -> context.getColor(R.color.amount_high) // More than 50% left
+            amountLeftPercent > 20 -> context.getColor(R.color.amount_medium) // 20-50% left
             else -> context.getColor(R.color.amount_low) // Less than 20% left
         }
     }
-
-
 }
 
 
