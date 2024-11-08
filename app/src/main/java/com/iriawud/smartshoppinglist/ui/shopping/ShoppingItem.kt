@@ -1,7 +1,6 @@
-package com.iriawud.smartshoppinglist.ui.home
+package com.iriawud.smartshoppinglist.ui.shopping
 
 import android.content.Context
-import android.health.connect.datatypes.units.Percentage
 import com.iriawud.smartshoppinglist.R
 import java.text.SimpleDateFormat
 import java.util.Date

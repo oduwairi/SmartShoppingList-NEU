@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.dashboard
+package com.iriawud.smartshoppinglist.ui.inventory
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
-import com.iriawud.smartshoppinglist.ui.home.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
 class InventoryAdapter(private var items: List<ShoppingItem>) :
     RecyclerView.Adapter<InventoryAdapter.CategoryViewHolder>() {

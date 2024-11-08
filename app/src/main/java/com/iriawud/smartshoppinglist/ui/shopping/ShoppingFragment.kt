@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.home
+package com.iriawud.smartshoppinglist.ui.shopping
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
 import com.iriawud.smartshoppinglist.ui.CategorySelectionDialog
 import com.iriawud.smartshoppinglist.ui.ShoppingUtils
-import com.iriawud.smartshoppinglist.ui.dashboard.InventoryViewModel
+import com.iriawud.smartshoppinglist.ui.inventory.InventoryViewModel
 
 
 class ShoppingFragment : Fragment() {

@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.notifications
+package com.iriawud.smartshoppinglist.ui.analytics
 
 import android.os.Bundle
 import android.view.LayoutInflater

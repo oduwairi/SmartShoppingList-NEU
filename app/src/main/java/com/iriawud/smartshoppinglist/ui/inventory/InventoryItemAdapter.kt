@@ -1,19 +1,15 @@
-package com.iriawud.smartshoppinglist.ui.dashboard
+package com.iriawud.smartshoppinglist.ui.inventory
 
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
-import com.iriawud.smartshoppinglist.ui.home.PriorityColor
-import com.iriawud.smartshoppinglist.ui.home.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.PriorityColor
+import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 import java.text.SimpleDateFormat
 import java.util.Locale
 

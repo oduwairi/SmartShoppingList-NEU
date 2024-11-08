@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.home
+package com.iriawud.smartshoppinglist.ui.shopping
 
 import android.text.Spannable
 import android.text.SpannableString

@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.dashboard
+package com.iriawud.smartshoppinglist.ui.inventory
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -12,7 +12,7 @@ import android.widget.Spinner
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
-import com.iriawud.smartshoppinglist.ui.home.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
 object ShoppingUtils {
     fun addItem(
