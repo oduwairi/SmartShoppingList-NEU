@@ -32,11 +32,4 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
         _items.value?.clear()
         _items.postValue(_items.value)  // Notify observers of the change
     }
-
-    fun markItemAsDone(item: ShoppingItem) {
-        _items.value?.let {
-            it.remove(item)
-            _items.value = it // Trigger LiveData update
-        }
-    }
 }
