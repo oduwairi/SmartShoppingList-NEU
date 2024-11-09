@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.home
+package com.iriawud.smartshoppinglist.ui.shopping
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -30,9 +30,5 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     fun deleteAllItems() {
         _items.value?.clear()
         _items.postValue(_items.value)  // Notify observers of the change
-    }
-
-    fun markItemAsDone(item: ShoppingItem) {
-        // Update the item's status in the repository
     }
 }

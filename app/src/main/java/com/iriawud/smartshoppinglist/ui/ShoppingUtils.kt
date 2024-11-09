@@ -12,7 +12,7 @@ import android.widget.Spinner
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
-import com.iriawud.smartshoppinglist.ui.home.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
 object ShoppingUtils {
     fun addItem(
@@ -25,6 +25,7 @@ object ShoppingUtils {
         newItemCategory: String,
         newItemFrequency: String?,
         newItemFrequencyUnit: String?,
+        newItemAmountLeftPercentage: Int?,
         viewModel: ItemViewModel,
         fieldsToClear: List<EditText>,
         prioritySlider: Slider,
@@ -35,15 +36,23 @@ object ShoppingUtils {
         if (newItemName.isNotBlank()) {
             val newItem = ShoppingItem(
                 name = newItemName,
-                quantity = "$newItemQuantity $newItemQuantityUnit",
+                quantity = if (newItemQuantity.isNotBlank() && newItemQuantityUnit.isNotBlank())
+                    "$newItemQuantity $newItemQuantityUnit"
+                else ShoppingItem().quantity, // Default quantity
                 category = newItemCategory,
-                price = "$newItemCost $newItemCostUnit",
-                priority = newItemPriority,
+                price = if (newItemCost.isNotBlank() && newItemCostUnit.isNotBlank())
+                    "$newItemCost $newItemCostUnit"
+                else ShoppingItem().price,
+                priority = newItemPriority ?: ShoppingItem().priority, // Default priority
                 imageUrl = newItemName.lowercase(),
                 frequency = if (!newItemFrequency.isNullOrBlank() && !newItemFrequencyUnit.isNullOrBlank())
                     "$newItemFrequency per $newItemFrequencyUnit"
-                else "1 per week"
+                else ShoppingItem().frequency,
             )
+            // Set explicit amount left percentage if provided
+            if (newItemAmountLeftPercentage != null) {
+                newItem.setExplicitAmountLeftPercent(newItemAmountLeftPercentage)
+            }
 
             viewModel.addItem(newItem)
 

@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.home
+package com.iriawud.smartshoppinglist.ui.shopping
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,12 +12,14 @@ import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
 import com.iriawud.smartshoppinglist.ui.CategorySelectionDialog
 import com.iriawud.smartshoppinglist.ui.ShoppingUtils
+import com.iriawud.smartshoppinglist.ui.inventory.InventoryViewModel
 
 
 class ShoppingFragment : Fragment() {
-    //setup adapter and view model
+    //setup adapter and view models
     private lateinit var adapter: ShoppingAdapter
-    private lateinit var viewModel: ShoppingViewModel
+    private lateinit var shoppingViewModel: ShoppingViewModel
+    private lateinit var inventoryViewModel: InventoryViewModel
 
     //setup binding and other variables
     private var _binding: FragmentShoppingBinding? = null
@@ -35,17 +37,14 @@ class ShoppingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
+        shoppingViewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
+        inventoryViewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
 
         adapter = ShoppingAdapter(mutableListOf<ShoppingItem>())
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 
-        viewModel.items.observe(viewLifecycleOwner, { updatedList ->
-            adapter.updateItems(updatedList)
-        })
-
-        viewModel.items.observe(viewLifecycleOwner) { items ->
+        shoppingViewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)
             ShoppingUtils.updateEmptyStateView(
                 emptyStateView = binding.root.findViewById(R.id.emptyStateView),
@@ -58,16 +57,27 @@ class ShoppingFragment : Fragment() {
             context = requireContext(),
             adapter = adapter,
             onItemDeleted = { item ->
-                handleItemDeleted(item)
+                shoppingViewModel.deleteItem(item)
             },
             onItemDone = { item ->
-                viewModel.markItemAsDone(item)
+                shoppingViewModel.deleteItem(item)
+                inventoryViewModel.addItem(item)
             }
+        )
+
+        //setup dropdown menus with default values
+        ShoppingUtils.setupDropdownMenus(
+            context = requireContext(),
+            quantityUnitSpinner = binding.quantityUnitSpinner,
+            prioritySpinner = binding.prioritySpinner,
+            prioritySlider = binding.prioritySlider,
+            frequencyUnitSpinner = binding.frequencyUnitSpinner
         )
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.shoppingRecyclerView)
 
+        //set on click listener for "add" button to create a ShoppingItem class
         binding.buttonAddItem.setOnClickListener {
             ShoppingUtils.addItem(
                 binding.editTextNewItem.text.toString().trim(),
@@ -79,7 +89,8 @@ class ShoppingFragment : Fragment() {
                 binding.currentCategoryText.text.toString().trim(),
                 binding.frequencyEditText.text.toString().trim(),
                 binding.frequencyUnitSpinner.selectedItem.toString().trim(),
-                viewModel,
+                null,
+                shoppingViewModel,
                 listOf(
                     binding.editTextNewItem,
                     binding.quantityEditText,
@@ -94,15 +105,8 @@ class ShoppingFragment : Fragment() {
             )
         }
 
+        //set on click listener for "item details" button to toggle the expandable card
         binding.buttonItemDetails.setOnClickListener {
-            ShoppingUtils.setupDropdownMenus(
-                context = requireContext(),
-                quantityUnitSpinner = binding.quantityUnitSpinner,
-                prioritySpinner = binding.prioritySpinner,
-                prioritySlider = binding.prioritySlider,
-                frequencyUnitSpinner = binding.frequencyUnitSpinner
-            )
-
             isInputBarExpanded = ShoppingUtils.toggleExpandableDetailsCard(
                 binding.expandableCardInputs,
                 requireContext(),
@@ -110,6 +114,7 @@ class ShoppingFragment : Fragment() {
             )
         }
 
+        //set on click listener for "menu" button to toggle the expandable menu buttons
         binding.buttonMenuExpand.setOnClickListener {
             isBottomMenuExpanded = ShoppingUtils.toggleExpandableMenuButtons(
                 binding.buttonMenuExpand,
@@ -118,6 +123,7 @@ class ShoppingFragment : Fragment() {
             )
         }
 
+        //set on click listener for "set category" card to show the category selection dialog
         binding.setCategoryCard.setOnClickListener {
             val dialog = CategorySelectionDialog { selectedCategory ->
                 binding.currentCategoryText.text = selectedCategory
@@ -129,10 +135,6 @@ class ShoppingFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun handleItemDeleted(item: ShoppingItem) {
-        viewModel.deleteItem(item)
     }
 }
 

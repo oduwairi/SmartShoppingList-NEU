@@ -7,13 +7,11 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/amountLeftIndicator"
-        android:layout_width="0dp"
+        android:layout_width="140dp"
         android:layout_height="7dp"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         app:cardBackgroundColor="@color/amount_high"
         app:cardCornerRadius="6dp"
-        app:layout_constraintEnd_toEndOf="@id/inventoryItemCard"
         app:layout_constraintStart_toStartOf="@id/inventoryItemCard"
         app:layout_constraintTop_toBottomOf="@id/inventoryItemCard" />
 
@@ -46,8 +44,8 @@
                 android:text="Time left : 3 days"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@id/inventoryAmountLeftText"
-                app:layout_constraintTop_toBottomOf="@id/inventoryAmountLeftText" />
+                app:layout_constraintStart_toStartOf="@id/inventoryItemPriority"
+                app:layout_constraintTop_toBottomOf="@id/inventoryItemPriority" />
 
             <TextView
                 android:id="@+id/inventoryDateAddedText"
@@ -63,12 +61,12 @@
                 app:layout_constraintTop_toBottomOf="@id/inventoryItemImage" />
 
             <TextView
-                android:id="@+id/inventoryAmountLeftText"
+                android:id="@+id/inventoryItemPriority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/albert_sans"
-                android:text="Amount : 12 pcs"
+                android:text="Priority : High"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@id/inventoryDateAddedText"

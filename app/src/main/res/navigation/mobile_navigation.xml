@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_shopping"
-        android:name="com.iriawud.smartshoppinglist.ui.home.ShoppingFragment"
+        android:name="com.iriawud.smartshoppinglist.ui.shopping.ShoppingFragment"
         android:label="@string/title_shopping"
         tools:layout="@layout/fragment_shopping" >
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/navigation_inventory"
-        android:name="com.iriawud.smartshoppinglist.ui.dashboard.InventoryFragment"
+        android:name="com.iriawud.smartshoppinglist.ui.inventory.InventoryFragment"
         android:label="@string/title_inventory"
         tools:layout="@layout/fragment_inventory" >
         <action
@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/navigation_analytics"
-        android:name="com.iriawud.smartshoppinglist.ui.notifications.AnalyticsFragment"
+        android:name="com.iriawud.smartshoppinglist.ui.analytics.AnalyticsFragment"
         android:label="@string/title_analytics"
         tools:layout="@layout/fragment_analytics" >
         <action

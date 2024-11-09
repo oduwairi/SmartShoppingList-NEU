@@ -1,4 +1,4 @@
-package com.iriawud.smartshoppinglist.ui.dashboard
+package com.iriawud.smartshoppinglist.ui.inventory
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -32,16 +32,14 @@ class InventoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[InventoryViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
+
 
         adapter = InventoryAdapter(mutableListOf())
         binding.inventoryRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.inventoryRecyclerView.adapter = adapter
 
-        viewModel.items.observe(viewLifecycleOwner) { updatedList ->
-            adapter.updateItems(updatedList)
-        }
-
+        //observe the items in the view model and show empty state view if the list is empty
         viewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)
             ShoppingUtils.updateEmptyStateView(
@@ -50,6 +48,16 @@ class InventoryFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
+        //setup dropdown menus with default values
+        ShoppingUtils.setupDropdownMenus(
+            context = requireContext(),
+            quantityUnitSpinner = binding.quantityUnitSpinner,
+            prioritySpinner = binding.prioritySpinner,
+            prioritySlider = binding.prioritySlider,
+            frequencyUnitSpinner = null
+        )
+
+        //set on click listener for "add" button to create a ShoppingItem class
         binding.buttonAddItem.setOnClickListener {
             ShoppingUtils.addItem(
                 binding.editTextNewItemInventory.text.toString().trim(),
@@ -61,6 +69,7 @@ class InventoryFragment : Fragment() {
                 binding.currentCategoryText.text.toString().trim(),
                 null,
                 null,
+                binding.remaningQuantitySlider.value.toInt(),
                 viewModel,
                 listOf(
                     binding.editTextNewItemInventory,
@@ -75,15 +84,8 @@ class InventoryFragment : Fragment() {
             )
         }
 
+        //set on click listener for "item details" button to toggle expandable card
         binding.buttonItemDetails.setOnClickListener {
-            ShoppingUtils.setupDropdownMenus(
-                context = requireContext(),
-                quantityUnitSpinner = binding.quantityUnitSpinner,
-                prioritySpinner = binding.prioritySpinner,
-                prioritySlider = binding.prioritySlider,
-                frequencyUnitSpinner = null
-            )
-
             isInputBarExpanded = ShoppingUtils.toggleExpandableDetailsCard(
                 binding.expandableCardInputs,
                 requireContext(),
@@ -91,6 +93,7 @@ class InventoryFragment : Fragment() {
             )
         }
 
+        //set on click listener for menu button to toggle the menu
         binding.buttonMenuExpandInventory.setOnClickListener {
             isBottomMenuExpanded = ShoppingUtils.toggleExpandableMenuButtons(
                 binding.buttonMenuExpandInventory,
@@ -99,6 +102,7 @@ class InventoryFragment : Fragment() {
             )
         }
 
+        //set on click listener for category card to open category selection dialog
         binding.setCategoryCard.setOnClickListener {
             val dialog = CategorySelectionDialog { selectedCategory ->
                 binding.currentCategoryText.text = selectedCategory
