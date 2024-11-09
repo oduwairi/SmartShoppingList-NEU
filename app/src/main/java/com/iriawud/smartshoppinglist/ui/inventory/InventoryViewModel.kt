@@ -47,6 +47,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                 if (response.isSuccessful) {
                     val categoryMap = _categories.value ?: emptyMap()
                     val fetchedItems = response.body()?.map { inventoryItem ->
+                        val createdAt = convertToSimpleDateFormat(inventoryItem.stocked_at)
                         val categoryName = categoryMap[inventoryItem.category_id] ?: "Uncategorized"
                         val frequency = calculateFrequency(
                             inventoryItem.stocked_at ?: ShoppingItem.getCurrentTimestamp(),
@@ -61,7 +62,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                             category = categoryName,
                             imageUrl = inventoryItem.image_url ?: inventoryItem.item_name.lowercase(),
                             frequency = frequency,
-                            createdAt = inventoryItem.stocked_at ?: ShoppingItem.getCurrentTimestamp()
+                            createdAt = createdAt
                         )
                     } ?: emptyList()
                     _items.value = fetchedItems.toMutableList()
@@ -168,25 +169,32 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
         if (restockDate.isNullOrEmpty()) return "Not set"
 
         try {
+            // Convert both dates to simple format
+            val simpleStockedAt = convertToSimpleDateFormat(stockedAt)
+            val simpleRestockDate = convertToSimpleDateFormat(restockDate)
+
             val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            val stockedDate = formatter.parse(stockedAt)
-            val restockDateParsed = formatter.parse(restockDate)
+            val stockedDate = formatter.parse(simpleStockedAt)
+            val restockDateParsed = formatter.parse(simpleRestockDate)
 
             if (stockedDate != null && restockDateParsed != null) {
                 val differenceInMillis = restockDateParsed.time - stockedDate.time
                 val differenceInDays = (differenceInMillis / (1000 * 60 * 60 * 24)).toInt()
 
-                return if (differenceInDays > 0) {
-                    "1 per $differenceInDays day${if (differenceInDays > 1) "s" else ""}"
-                } else {
-                    "Invalid frequency"
+                // Determine the appropriate period (day, week, or month)
+                return when {
+                    differenceInDays < 7 -> "$differenceInDays per day"
+                    differenceInDays < 30 -> "${differenceInDays / 7} per week"
+                    else -> "${differenceInDays / 30} per month"
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("InventoryViewModel", "Error calculating frequency: ${e.message}", e)
         }
         return "Not set"
     }
+
+
 
     private fun calculateRestockDate(stockedAt: String, frequency: String): String? {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -214,5 +222,25 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
             null
         }
     }
+
+    private fun convertToSimpleDateFormat(dateString: String?): String {
+        if (dateString.isNullOrBlank()) {
+            return ShoppingItem.getCurrentTimestamp() // Fallback to current timestamp
+        }
+
+        return try {
+            // Parse RFC 1123 format
+            val rfc1123Formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
+            val date = rfc1123Formatter.parse(dateString)
+
+            // Convert to "yyyy-MM-dd HH:mm:ss" format
+            val simpleFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            simpleFormatter.format(date!!)
+        } catch (e: Exception) {
+            Log.e("InventoryViewModel", "Error converting date format: ${e.message}", e)
+            ShoppingItem.getCurrentTimestamp() // Fallback to current timestamp
+        }
+    }
+
 
 }
