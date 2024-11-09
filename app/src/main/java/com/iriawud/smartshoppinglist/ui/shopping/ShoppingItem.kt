@@ -10,7 +10,7 @@ data class ShoppingItem(
     val name: String = "Unknown",
     var quantity: String = "1 pcs",
     var category: String = "Uncategorized",
-    var price: String = "Not set",
+    var price: String = "1 USD",
     var priority: Int = 5,
     var imageUrl: String = name.lowercase(),
     var frequency: String = "Not set",
