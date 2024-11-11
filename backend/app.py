@@ -78,6 +78,51 @@ def add_inventory_item():
     # Return success response
     return jsonify({"message": "Inventory item added successfully!"}), 201
 
+@app.route('/shopping_items', methods=['GET'])
+def get_shopping_items():
+    cursor = db.cursor(dictionary=True)
+    query = "SELECT * FROM ShoppingItems"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    cursor.close()
+    return jsonify(result)
+
+@app.route('/shopping_items', methods=['POST'])
+def add_shopping_item():
+    # Get data from the request
+    data = request.json
+    list_id = data.get('list_id')
+    item_name = data.get('item_name')
+    quantity = data.get('quantity')
+    quantity_unit = data.get('quantity_unit')
+    price = data.get('price')
+    currency = data.get('currency')
+    image_url = data.get('image_url')
+    priority = data.get('priority')
+    frequency_value = data.get('frequency_value')
+    frequency_unit = data.get('frequency_unit')
+    category_id = data.get('category_id')
+    created_at = data.get('added_at')
+
+    # Insert into the database
+    cursor = db.cursor()
+    query = """
+        INSERT INTO ShoppingItems (
+            list_id, item_name, quantity, quantity_unit, price, currency,
+            image_url, priority, frequency_value, frequency_unit, category_id, created_at
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    cursor.execute(query, (
+        list_id, item_name, quantity, quantity_unit, price, currency,
+        image_url, priority, frequency_value, frequency_unit, category_id, created_at
+    ))
+    db.commit()
+    cursor.close()
+
+    # Return success response
+    return jsonify({"message": "Shopping item added successfully!"}), 201
+
+
 # Run the Flask server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

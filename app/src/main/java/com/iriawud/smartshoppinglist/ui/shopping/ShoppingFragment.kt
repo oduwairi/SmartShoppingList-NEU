@@ -52,6 +52,8 @@ class ShoppingFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
+        shoppingViewModel.fetchShoppingItems()
+
         // Setup swipe functionality using the ShoppingCardSwiper class
         val swipeHandler = ShoppingCardSwiper(
             context = requireContext(),

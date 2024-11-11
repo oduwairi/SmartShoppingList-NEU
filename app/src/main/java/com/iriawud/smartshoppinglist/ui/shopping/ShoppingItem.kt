@@ -7,6 +7,7 @@ import java.util.Date
 import java.util.Locale
 
 data class ShoppingItem(
+    val id:Int ?= null,
     val name: String = "Unknown",
     var quantity: String = "1 pcs",
     var category: String = "Uncategorized",
@@ -108,36 +109,6 @@ data class ShoppingItem(
         } else {
             throw IllegalArgumentException("Not set")
         }
-    }
-
-    // Parse quantity as a numeric value
-    fun getFullQuantity(): Double {
-        return quantity.split(" ")[0].toDoubleOrNull() ?: 0.0
-    }
-
-    // Calculate the consumption rate (quantity per day)
-    fun getConsumptionRate(): Double {
-        val frequencyRegex = Regex("(\\d+) per (\\w+)")
-        val matchResult = frequencyRegex.matchEntire(frequency)
-        return if (matchResult != null) {
-            val (amount, unit) = matchResult.destructured
-            val frequencyInDays = when (unit.lowercase()) {
-                "day", "days" -> 1.0
-                "week", "weeks" -> 7.0
-                "month", "months" -> 30.0 // Approximation
-                else -> 1.0
-            }
-            getFullQuantity() * amount.toDouble() / (frequencyInDays)
-        } else {
-            0.0
-        }
-    }
-
-    // Calculate the remaining amount
-    fun getAmountLeft(): Double {
-        val daysPassed = getDaysPassed()
-        val consumptionRate = getConsumptionRate()
-        return (getFullQuantity() - (daysPassed * consumptionRate)).coerceAtLeast(0.0)
     }
 
     // Calculate bar width as a percentage of the max width

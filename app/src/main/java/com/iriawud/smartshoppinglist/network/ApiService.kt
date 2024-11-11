@@ -1,9 +1,12 @@
 package com.iriawud.smartshoppinglist.network
 
+import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 
 data class InventoryItem(
@@ -19,6 +22,22 @@ data class InventoryItem(
     val category_id: Int,
     val stocked_at: String?,
     val restock_date: String?
+)
+
+data class ShoppingListItem(
+    val item_id: Int? = null,              // Primary key (auto-incremented, nullable for POST)
+    val list_id: Int,                      // Foreign key referencing the shopping list
+    val item_name: String,                 // Name of the item
+    val quantity: Double,                  // Quantity of the item
+    val quantity_unit: String?,            // Unit of measurement (e.g., kg, pcs)
+    val price: Double?,                    // Price of the item (nullable)
+    val currency: String?,                 // Currency (e.g., USD, EUR)
+    val image_url: String,                 // Image URL
+    val priority: Int,                     // Priority level
+    val frequency_value: Int?,             // Frequency value
+    val frequency_unit: String?,           // Frequency unit (e.g., day, week)
+    val category_id: Int,                  // Foreign key referencing the category table
+    val added_at: String                 // Timestamp when the item was created
 )
 
 data class Category(
@@ -43,4 +62,16 @@ interface ApiService {
 
     @POST("/categories")
     fun addCategory(@Body category: Category): Call<Void>
+
+    // GET all shopping items
+    @GET("/shopping_items")
+    fun getShoppingItems(): Call<List<ShoppingListItem>>
+
+    // POST a new shopping item
+    @POST("/shopping_items")
+    fun addShoppingItem(@Body item: ShoppingListItem): Call<Void>
+
+    // DELETE a shopping item by ID
+    @DELETE("/shopping_items/{id}")
+    fun deleteShoppingItem(@Path("id") itemId: Int): Call<Void>
 }
