@@ -125,10 +125,18 @@ class ShoppingFragment : Fragment() {
             )
         }
 
-        //set on click listener for "set category" card to show the category selection dialog
+        // Set on click listener for category card to open category selection dialog
         binding.setCategoryCard.setOnClickListener {
             val dialog = CategorySelectionDialog { selectedCategory ->
                 binding.currentCategoryText.text = selectedCategory
+
+                // Dynamically set the category icon using GuiUtils
+                val drawableResId = GuiUtils.getDrawableResId(requireContext(), selectedCategory)
+                if (drawableResId != 0) {
+                    binding.setCategoryIcon.setImageResource(drawableResId)
+                } else {
+                    binding.setCategoryIcon.setImageResource(R.drawable.uncategorized) // Fallback icon
+                }
             }
             dialog.show(childFragmentManager, "CategorySelectionDialog")
         }

@@ -193,4 +193,17 @@ object GuiUtils {
             it.adapter = adapterFrequencies
         }
     }
+
+    /**
+     * Get the drawable resource ID for a given category name.
+     * The function converts the category name into a drawable resource name.
+     *
+     * @param context The application or activity context.
+     * @param categoryName The name of the category (e.g., "Dairy Products").
+     * @return The resource ID of the drawable or 0 if not found.
+     */
+    fun getDrawableResId(context: Context, categoryName: String): Int {
+        val drawableName = categoryName.lowercase().replace(" ", "_")
+        return context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+    }
 }

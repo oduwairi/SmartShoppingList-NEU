@@ -139,7 +139,7 @@
         android:id="@+id/inventoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="16dp"
+        android:padding="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -338,7 +338,7 @@
                             android:layout_width="60dp"
                             android:layout_height="60dp"
                             android:padding="5dp"
-                            android:src="@drawable/organic_nutrition_svgrepo_com"
+                            android:src="@drawable/uncategorized"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />

@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from mysql.connector import pooling
+import traceback
 import mysql.connector
 
 app = Flask(__name__)
@@ -102,6 +103,7 @@ def add_inventory_item():
         db.close()
         return jsonify({"message": "Inventory item added successfully!"}), 201
     except Exception as e:
+        traceback.print_exc()  # Print the stack trace in the server log
         return jsonify({"error": str(e)}), 500
 
 @app.route('/shopping_items', methods=['GET'])
@@ -152,6 +154,7 @@ def add_shopping_item():
         db.close()
         return jsonify({"message": "Shopping item added successfully!"}), 201
     except Exception as e:
+        traceback.print_exc()  # Print the stack trace in the server log
         return jsonify({"error": str(e)}), 500
 
 @app.route('/shopping_items/<int:item_id>', methods=['DELETE'])

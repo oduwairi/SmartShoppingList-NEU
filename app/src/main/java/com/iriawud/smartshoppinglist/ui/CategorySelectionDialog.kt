@@ -45,7 +45,7 @@ class CategorySelectionDialog(
 
             // Set the category icon using a helper function
             val categoryIcon = itemView.findViewById<ImageView>(R.id.categoryIcon)
-            val drawableResId = getCategoryDrawableResId(categoryName)
+            val drawableResId = GuiUtils.getDrawableResId(requireContext(), categoryName)
             if (drawableResId != 0) {
                 categoryIcon.setImageResource(drawableResId)
             } else {
@@ -63,12 +63,6 @@ class CategorySelectionDialog(
         categoryPopupContainer?.setOnClickListener {
             dismiss()
         }
-    }
-
-    private fun getCategoryDrawableResId(categoryName: String): Int {
-        // Convert the category name to a matching drawable name
-        val drawableName = categoryName.lowercase().replace(" ", "_")
-        return resources.getIdentifier(drawableName, "drawable", requireContext().packageName)
     }
 
     override fun onStart() {

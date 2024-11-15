@@ -105,8 +105,6 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
         })
     }
 
-
-
     // Add a new inventory item to backend
     override fun addItem(item: ShoppingItem) {
         _isLoading.value = true
@@ -129,6 +127,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
 
         val inventoryItem = InventoryItem(
             inventory_id = 1, // Adjust inventory_id logic as needed
+            item_id = null,
             item_name = item.name,
             quantity_stocked = quantityStocked,
             quantity_unit = quantityUnit,

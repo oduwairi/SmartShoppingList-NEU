@@ -421,7 +421,7 @@
                             android:layout_width="60dp"
                             android:layout_height="60dp"
                             android:padding="5dp"
-                            android:src="@drawable/organic_nutrition_svgrepo_com"
+                            android:src="@drawable/uncategorized"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
