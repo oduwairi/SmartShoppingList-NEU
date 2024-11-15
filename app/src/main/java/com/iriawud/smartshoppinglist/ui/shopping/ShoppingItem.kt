@@ -51,7 +51,7 @@ data class ShoppingItem(
 
 
     // Compute days passed since 'createdAt'
-    fun getDaysPassed(): Int {
+    private fun getDaysPassed(): Int {
         val currentDate = Date()
         val createdAtDate = getCreatedAtDate()
         val timePassedMillis = currentDate.time - createdAtDate.time

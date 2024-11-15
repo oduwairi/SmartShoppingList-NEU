@@ -30,9 +30,9 @@ object MathUtils {
                 val differenceInDays = (differenceInMillis / (1000 * 60 * 60 * 24)).toInt()
 
                 when {
-                    differenceInDays < 7 -> "$differenceInDays per day"
-                    differenceInDays < 30 -> "${differenceInDays / 7} per week"
-                    else -> "${differenceInDays / 30} per month"
+                    differenceInDays < 1 -> "$differenceInDays per day"
+                    differenceInDays < 7 -> "${7 / differenceInDays } per week"
+                    else -> "${30 / differenceInDays } per month"
                 }
             } else {
                 "Not set"
@@ -60,9 +60,9 @@ object MathUtils {
             if (stockedDate != null && matchResult != null) {
                 val (amount, unit) = matchResult.destructured
                 val daysToAdd = when (unit.lowercase()) {
-                    "day", "days" -> amount.toInt()
-                    "week", "weeks" -> amount.toInt() * 7
-                    "month", "months" -> amount.toInt() * 30
+                    "day", "days" -> 1 / amount.toInt()
+                    "week", "weeks" -> 7 / amount.toInt()
+                    "month", "months" -> 30 / amount.toInt()
                     else -> throw IllegalArgumentException("Frequency format not recognized")
                 }
                 val restockDate = Date(stockedDate.time + daysToAdd * 24 * 60 * 60 * 1000L)
@@ -102,7 +102,7 @@ object MathUtils {
      * Gets the current timestamp in "yyyy-MM-dd HH:mm:ss" format.
      * @return The current timestamp as a string.
      */
-    fun getCurrentTimestamp(): String {
+    private fun getCurrentTimestamp(): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return formatter.format(Date())
     }
