@@ -48,8 +48,7 @@ class InventoryFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
-        // Fetch inventory items on fragment load
-        viewModel.fetchInventoryItems()
+        viewModel.initializeData()
 
         //setup dropdown menus with default values
         ShoppingUtils.setupDropdownMenus(

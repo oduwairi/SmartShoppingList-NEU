@@ -1,25 +1,40 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from mysql.connector import pooling
 import mysql.connector
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow requests from your Android app
 
-db = mysql.connector.connect(
-    host="localhost",
-    user="oduwairi",
-    password="osama.dwairi21",
-    database="shoppingappdb"
+db_config = {
+    "host": "localhost",
+    "user": "oduwairi",
+    "password": "osama.dwairi21",
+    "database": "shoppingappdb",
+}
+
+connection_pool = pooling.MySQLConnectionPool(
+    pool_name="mypool",
+    pool_size=10,
+    **db_config
 )
+
+def get_db_connection():
+    return connection_pool.get_connection()
 
 @app.route('/categories', methods=['GET'])
 def get_categories():
-    cursor = db.cursor(dictionary=True)
-    query = "SELECT * FROM Categories"
-    cursor.execute(query)
-    result = cursor.fetchall()
-    cursor.close()
-    return jsonify(result)
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM categories")
+        categories = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify(categories), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/categories', methods=['POST'])
 def add_category():
@@ -27,7 +42,8 @@ def add_category():
     category_name = data.get('category_name')
     category_image_url = data.get('category_image_url')
     category_color = data.get('category_color')
-
+    
+    db = get_db_connection()
     cursor = db.cursor()
     query = "INSERT INTO Categories (category_name, category_image_url, category_color) VALUES (%s, %s, %s)"
     cursor.execute(query, (category_name, category_image_url, category_color))
@@ -37,6 +53,7 @@ def add_category():
 
 @app.route('/inventory_items', methods=['GET'])
 def get_inventory_items():
+    db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     query = "SELECT * FROM InventoryItems"
     cursor.execute(query)
@@ -61,6 +78,7 @@ def add_inventory_item():
     restock_date = data.get('restock_date')
 
     # Insert into the database
+    db = get_db_connection()
     cursor = db.cursor()
     query = """
         INSERT INTO InventoryItems (
@@ -80,6 +98,7 @@ def add_inventory_item():
 
 @app.route('/shopping_items', methods=['GET'])
 def get_shopping_items():
+    db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     query = "SELECT * FROM ShoppingItems"
     cursor.execute(query)
@@ -105,6 +124,7 @@ def add_shopping_item():
     created_at = data.get('added_at')
 
     # Insert into the database
+    db = get_db_connection()
     cursor = db.cursor()
     query = """
         INSERT INTO ShoppingItems (

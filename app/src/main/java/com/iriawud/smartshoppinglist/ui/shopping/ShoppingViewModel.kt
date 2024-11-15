@@ -28,9 +28,10 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
-    init {
+    fun initializeData() {
         _items.value = mutableListOf() // Initialize with an empty list
-        fetchCategories() // Fetch categories at initialization
+        fetchCategories() // Fetch categories first
+        fetchShoppingItems() // Fetch shopping items only after categories are fetched
     }
 
     // Fetch inventory items from backend
@@ -47,11 +48,11 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
                     val fetchedItems = response.body()?.map { shoppingListItem ->
                         val createdAt = MathUtils.convertToSimpleDateFormat(shoppingListItem.added_at)
                         val categoryName = categoryMap[shoppingListItem .category_id] ?: "Uncategorized"
-                        // Map InventoryItem to ShoppingItem
+                        // Map ShoppingListItem to ShoppingItem
                         ShoppingItem(
                             id = shoppingListItem .item_id,
                             name = shoppingListItem .item_name,
-                            quantity = shoppingListItem.quantity.toString() + " per " + shoppingListItem .quantity_unit,
+                            quantity = "${if (shoppingListItem.quantity % 1 == 0.0) shoppingListItem.quantity.toInt() else shoppingListItem.quantity} ${shoppingListItem.quantity_unit}",
                             price = shoppingListItem .price.toString() + " " + shoppingListItem .currency,
                             priority =shoppingListItem .priority,
                             category = categoryName,
@@ -141,7 +142,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
 
         RetrofitInstance.api.addShoppingItem(shoppingListItem).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-              _isLoading.value = false
+                _isLoading.value = false
                 if (response.isSuccessful) {
                     addItemLocally(item)
                 } else {

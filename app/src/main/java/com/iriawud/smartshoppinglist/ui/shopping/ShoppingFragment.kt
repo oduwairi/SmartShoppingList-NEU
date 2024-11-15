@@ -40,7 +40,7 @@ class ShoppingFragment : Fragment() {
         shoppingViewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
         inventoryViewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
 
-        adapter = ShoppingAdapter(mutableListOf<ShoppingItem>())
+        adapter = ShoppingAdapter(mutableListOf())
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 
@@ -52,7 +52,7 @@ class ShoppingFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
-        shoppingViewModel.fetchShoppingItems()
+        shoppingViewModel.initializeData()
 
         // Setup swipe functionality using the ShoppingCardSwiper class
         val swipeHandler = ShoppingCardSwiper(

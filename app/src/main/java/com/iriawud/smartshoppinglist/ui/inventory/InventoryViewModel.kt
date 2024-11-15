@@ -31,8 +31,13 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
     val error: LiveData<String?> get() = _error
 
     init {
+        initializeData()
+    }
+
+    fun initializeData() {
         _items.value = mutableListOf() // Initialize with an empty list
-        fetchCategories() // Fetch categories at initialization
+        fetchCategories() // Fetch categories first
+        fetchInventoryItems() // Fetch shopping items only after categories are fetched
     }
 
     // Fetch inventory items from backend
@@ -56,7 +61,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                         // Map InventoryItem to ShoppingItem
                         ShoppingItem(
                             name = inventoryItem.item_name,
-                            quantity = inventoryItem.quantity_stocked.toString() + " per " + inventoryItem.quantity_unit,
+                            quantity = inventoryItem.quantity_stocked.toString() + " " + inventoryItem.quantity_unit,
                             price = inventoryItem.price.toString() + " " + inventoryItem.currency,
                             priority = inventoryItem.priority,
                             category = categoryName,
