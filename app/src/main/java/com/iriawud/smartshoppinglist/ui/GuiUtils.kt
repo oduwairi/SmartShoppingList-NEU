@@ -12,9 +12,10 @@ import android.widget.Spinner
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
+import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
-object ShoppingUtils {
+object GuiUtils {
     fun addItem(
         newItemName: String,
         newItemQuantity: String,
@@ -102,9 +103,9 @@ object ShoppingUtils {
     ): Boolean {
         val currentHeight = expandableCard.height
         val newHeight = if (!isCardExpanded) {
-            dpToPx(500f, context) // Expanded height
+            MathUtils.dpToPx(500f, context) // Expanded height
         } else {
-            dpToPx(50f, context) // Collapsed height
+            MathUtils.dpToPx(50f, context) // Collapsed height
         }
 
         val valueAnimator = ValueAnimator.ofInt(currentHeight, newHeight)
@@ -191,9 +192,5 @@ object ShoppingUtils {
             adapterFrequencies.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
             it.adapter = adapterFrequencies
         }
-    }
-
-    private fun dpToPx(dp: Float, context: Context): Int {
-        return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / 160f)).toInt()
     }
 }

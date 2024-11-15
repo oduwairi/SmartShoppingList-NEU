@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.fragment.app.DialogFragment
 import com.iriawud.smartshoppinglist.R
 
@@ -39,16 +38,22 @@ class CategorySelectionDialog(
         )
 
         // Populate the category list container
-        categories.forEach { category ->
+        categories.forEach { categoryName ->
             val itemView = layoutInflater.inflate(R.layout.category_selection_item, categoryListContainer, false)
             val categoryText = itemView.findViewById<TextView>(R.id.categoryName)
-            categoryText.text = category
+            categoryText.text = categoryName
 
-            // Optionally set an icon
+            // Set the category icon using a helper function
             val categoryIcon = itemView.findViewById<ImageView>(R.id.categoryIcon)
+            val drawableResId = getCategoryDrawableResId(categoryName)
+            if (drawableResId != 0) {
+                categoryIcon.setImageResource(drawableResId)
+            } else {
+                categoryIcon.setImageResource(R.drawable.ic_launcher_background) // Fallback icon
+            }
 
             itemView.setOnClickListener {
-                onCategorySelected(category) // Call the callback with the selected category
+                onCategorySelected(categoryName) // Call the callback with the selected category
                 dismiss() // Close the dialog after selection
             }
             categoryListContainer.addView(itemView)
@@ -58,6 +63,12 @@ class CategorySelectionDialog(
         categoryPopupContainer?.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun getCategoryDrawableResId(categoryName: String): Int {
+        // Convert the category name to a matching drawable name
+        val drawableName = categoryName.lowercase().replace(" ", "_")
+        return resources.getIdentifier(drawableName, "drawable", requireContext().packageName)
     }
 
     override fun onStart() {

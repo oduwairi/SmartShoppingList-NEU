@@ -66,4 +66,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.tooling.preview)
     androidTestImplementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler) // Or kapt for Kotlin
+    implementation(libs.androidsvg)
 }
