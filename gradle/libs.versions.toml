@@ -43,6 +43,9 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+glide = { module = "com.github.bumptech.glide:glide", version = "4.15.1" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version = "4.15.1" }
+androidsvg = { module = "com.caverock:androidsvg", version = "1.4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

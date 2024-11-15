@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
 import com.iriawud.smartshoppinglist.ui.CategorySelectionDialog
-import com.iriawud.smartshoppinglist.ui.ShoppingUtils
+import com.iriawud.smartshoppinglist.ui.GuiUtils
 import com.iriawud.smartshoppinglist.ui.inventory.InventoryViewModel
 
 
@@ -46,7 +46,7 @@ class ShoppingFragment : Fragment() {
 
         shoppingViewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)
-            ShoppingUtils.updateEmptyStateView(
+            GuiUtils.updateEmptyStateView(
                 emptyStateView = binding.root.findViewById(R.id.emptyStateView),
                 recyclerView = binding.shoppingRecyclerView,
                 isEmptyCheck = { items.isEmpty() })
@@ -68,7 +68,7 @@ class ShoppingFragment : Fragment() {
         )
 
         //setup dropdown menus with default values
-        ShoppingUtils.setupDropdownMenus(
+        GuiUtils.setupDropdownMenus(
             context = requireContext(),
             quantityUnitSpinner = binding.quantityUnitSpinner,
             prioritySpinner = binding.prioritySpinner,
@@ -81,7 +81,7 @@ class ShoppingFragment : Fragment() {
 
         //set on click listener for "add" button to create a ShoppingItem class
         binding.buttonAddItem.setOnClickListener {
-            ShoppingUtils.addItem(
+            GuiUtils.addItem(
                 binding.editTextNewItem.text.toString().trim(),
                 binding.quantityEditText.text.toString().trim(),
                 binding.quantityUnitSpinner.selectedItem.toString().trim(),
@@ -109,7 +109,7 @@ class ShoppingFragment : Fragment() {
 
         //set on click listener for "item details" button to toggle the expandable card
         binding.buttonItemDetails.setOnClickListener {
-            isInputBarExpanded = ShoppingUtils.toggleExpandableDetailsCard(
+            isInputBarExpanded = GuiUtils.toggleExpandableDetailsCard(
                 binding.expandableCardInputs,
                 requireContext(),
                 isInputBarExpanded
@@ -118,7 +118,7 @@ class ShoppingFragment : Fragment() {
 
         //set on click listener for "menu" button to toggle the expandable menu buttons
         binding.buttonMenuExpand.setOnClickListener {
-            isBottomMenuExpanded = ShoppingUtils.toggleExpandableMenuButtons(
+            isBottomMenuExpanded = GuiUtils.toggleExpandableMenuButtons(
                 binding.buttonMenuExpand,
                 binding.bottomExpandableMenuButtons,
                 isBottomMenuExpanded

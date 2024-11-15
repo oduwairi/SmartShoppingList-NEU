@@ -15,7 +15,7 @@ import com.google.android.material.slider.Slider
 import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
-object ShoppingUtils {
+object GuiUtils {
     fun addItem(
         newItemName: String,
         newItemQuantity: String,
