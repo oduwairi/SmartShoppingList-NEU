@@ -47,6 +47,20 @@ data class Category(
     val category_image_url: String
 )
 
+data class PredefinedItem(
+    val item_id: Int,
+    val category_id: Int,
+    val item_name: String,
+    val average_quantity: Double,
+    val default_quantity_unit: String,
+    val average_price: Double,
+    val default_currency: String,
+    val image_url: String,
+    val average_priority: Int,
+    val average_consumption_rate: Double,
+    val default_consumption_unit: String
+)
+
 
 interface ApiService {
     // GET all inventory items
@@ -74,4 +88,8 @@ interface ApiService {
     // DELETE a shopping item by ID
     @DELETE("/shopping_items/{id}")
     fun deleteShoppingItem(@Path("id") itemId: Int): Call<Void>
+
+    // GET all predefined items
+    @GET("/predefined_items")
+    fun getPredefinedItems(): Call<List<PredefinedItem>>
 }

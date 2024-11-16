@@ -287,6 +287,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="-3dp"
                     app:cardCornerRadius="10dp"
                     app:layout_constraintStart_toEndOf="@id/FillModeText"
                     app:layout_constraintTop_toTopOf="@id/FillModeText">
@@ -312,6 +313,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:fontFamily="@font/albert_sans_bold"
+                                android:padding="2dp"
                                 android:text="Manual"
                                 android:textColor="@color/black"
                                 android:textSize="16sp" />
@@ -333,6 +335,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:fontFamily="@font/albert_sans_bold"
+                                android:padding="2dp"
                                 android:text="AI"
                                 android:textColor="@color/white_background"
                                 android:textSize="16sp" />
@@ -393,7 +396,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="105dp"
+                    android:layout_marginTop="110dp"
                     app:cardCornerRadius="6dp"
                     app:layout_constraintEnd_toEndOf="@id/priorityCard"
                     app:layout_constraintStart_toStartOf="parent"
@@ -684,7 +687,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="21dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="80dp"
+                    android:layout_marginTop="85dp"
                     android:fontFamily="@font/albert_sans_bold"
                     android:text="Quantity"
                     android:textColor="@color/black"

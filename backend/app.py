@@ -175,6 +175,20 @@ def delete_shopping_item(item_id):
             return jsonify({"error": "Item not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/predefined_items', methods=['GET'])
+def get_predefined_items():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        query = "SELECT * FROM predefined_items"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Run the Flask server
 if __name__ == '__main__':

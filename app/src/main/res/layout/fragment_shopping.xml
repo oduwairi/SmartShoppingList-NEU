@@ -838,13 +838,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/editTextNewItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
         android:layout_marginTop="11dp"
         android:layout_marginEnd="5dp"
+        android:completionThreshold="1"
         android:fontFamily="@font/albert_sans"
         android:hint="I'm shopping for..."
         android:textColorHint="@color/hint_text"

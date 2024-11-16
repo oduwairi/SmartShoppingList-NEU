@@ -10,8 +10,11 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.cardview.widget.CardView
+import androidx.compose.ui.text.toLowerCase
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
+import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
+import com.iriawud.smartshoppinglist.network.PredefinedItem
 import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
@@ -103,7 +106,7 @@ object GuiUtils {
     ): Boolean {
         val currentHeight = expandableCard.height
         val newHeight = if (!isCardExpanded) {
-            MathUtils.dpToPx(500f, context) // Expanded height
+            MathUtils.dpToPx(510f, context) // Expanded height
         } else {
             MathUtils.dpToPx(50f, context) // Collapsed height
         }
@@ -193,6 +196,42 @@ object GuiUtils {
             it.adapter = adapterFrequencies
         }
     }
+
+    fun setupAutoCompleteTextView(
+        context: Context,
+        binding: FragmentShoppingBinding,
+        predefinedItems: List<PredefinedItem>
+    ) {
+        val autoCompleteTextView = binding.editTextNewItem
+        val itemMap = predefinedItems.associateBy { it.item_name }
+
+        // Set up adapter for AutoCompleteTextView
+        val adapter = PredefinedItemAdapter(context, predefinedItems)
+        autoCompleteTextView.setAdapter(adapter)
+
+        // Handle item selection
+        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
+            // Get the selected item's name from the dropdown
+            val selectedItem = adapter.getItem(position)
+            val itemDetails = itemMap[selectedItem?.item_name]
+
+            // Populate UI fields based on the selected item
+            itemDetails?.let {
+                binding.editTextNewItem.setText(it.item_name)
+                binding.quantityEditText.setText(it.average_quantity.toString())
+                binding.quantityUnitSpinner.setSelection(
+                    (binding.quantityUnitSpinner.adapter as ArrayAdapter<String>)
+                        .getPosition(it.default_quantity_unit.lowercase())
+                )
+                binding.costEditText.setText(it.average_price.toString())
+                binding.costUnitEditText.setText(it.default_currency)
+                binding.prioritySlider.value = it.average_priority.toFloat()
+                binding.currentCategoryText.text = it.category_id.toString()
+            }
+        }
+    }
+
+
 
     /**
      * Get the drawable resource ID for a given category name.

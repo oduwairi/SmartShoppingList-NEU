@@ -44,6 +44,8 @@ class ShoppingFragment : Fragment() {
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 
+        shoppingViewModel.initializeData()
+
         shoppingViewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)
             GuiUtils.updateEmptyStateView(
@@ -52,7 +54,14 @@ class ShoppingFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
-        shoppingViewModel.initializeData()
+        // Observe predefined items and update the AutoCompleteTextView
+        shoppingViewModel.predefinedItems.observe(viewLifecycleOwner) { predefinedItems ->
+            GuiUtils.setupAutoCompleteTextView(
+                context = requireContext(),
+                binding = binding,
+                predefinedItems = predefinedItems
+            )
+        }
 
         // Setup swipe functionality using the ShoppingCardSwiper class
         val swipeHandler = ShoppingCardSwiper(
