@@ -1,5 +1,6 @@
 package com.iriawud.smartshoppinglist.ui.inventory
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
+import com.iriawud.smartshoppinglist.ui.CategoryRepository
 import com.iriawud.smartshoppinglist.ui.GuiUtils
 import com.iriawud.smartshoppinglist.ui.shopping.PriorityColor
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
@@ -24,6 +26,7 @@ class InventoryItemAdapter(private val items: List<ShoppingItem>) :
         val itemPriority : TextView = itemView.findViewById(R.id.inventoryItemPriority)
         val itemTimeLeft : TextView = itemView.findViewById(R.id.inventoryTimeLeftText)
         val itemAmountLeftIndicator : CardView = itemView.findViewById(R.id.amountLeftIndicator)
+        val itemCard: CardView = itemView.findViewById(R.id.inventoryItemCard)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -80,6 +83,17 @@ class InventoryItemAdapter(private val items: List<ShoppingItem>) :
             // Use a fallback image if `imageUrl` is null or empty
             holder.itemImage.setImageResource(R.drawable.uncategorized)
         }
+
+        // Get the category color from CategoryRepository
+        val category = CategoryRepository.getCategories().find { it.category_name == item.category }
+        val categoryColor = if (category != null) {
+            Color.parseColor(category.category_color) // Use category's color
+        } else {
+            Color.parseColor("#FFFFFF") // Fallback to default color
+        }
+
+        // Set card background color
+        holder.itemCard.setCardBackgroundColor(categoryColor)
 
     }
 

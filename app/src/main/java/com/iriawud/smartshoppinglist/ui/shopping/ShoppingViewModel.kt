@@ -9,6 +9,7 @@ import com.iriawud.smartshoppinglist.network.Category
 import com.iriawud.smartshoppinglist.network.InventoryItem
 import com.iriawud.smartshoppinglist.network.RetrofitInstance
 import com.iriawud.smartshoppinglist.network.ShoppingListItem
+import com.iriawud.smartshoppinglist.ui.CategoryRepository
 import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
 import retrofit2.Call
 import retrofit2.Callback
@@ -88,6 +89,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
                     val categoryList = response.body() ?: emptyList()
                     val categoryMap = categoryList.associateBy({ it.category_id }, { it.category_name })
                     _categories.value = categoryMap
+                    CategoryRepository.setCategories(categoryList) // Save to singleton
                 } else {
                     _error.value = "Failed to fetch categories: ${response.message()}"
                     Log.e("ShoppingViewModel", "Error fetching categories: ${response.message()}")

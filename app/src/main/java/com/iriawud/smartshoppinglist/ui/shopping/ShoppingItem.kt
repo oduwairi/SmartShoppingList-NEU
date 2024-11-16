@@ -16,7 +16,7 @@ data class ShoppingItem(
     var imageUrl: String = name.lowercase(),
     var frequency: String = "Not set",
     var createdAt: String = getCurrentTimestamp(),
-    private var explicitAmountLeftPercent: Int? = null
+    private var explicitStartingPercent: Int? = null
 ) {
     companion object {
         fun getCurrentTimestamp(): String {
@@ -28,13 +28,13 @@ data class ShoppingItem(
     // Compute the percentage of the amount left or use the explicitly provided value
     val amountLeftPercent: Int
         get() {
-            val startingPercent = explicitAmountLeftPercent ?: 100
+            val startingPercent = explicitStartingPercent ?: 100
             return calculateDynamicPercentageLeft(startingPercent)
         }
 
     // Allow explicitly setting the remaining percentage
     fun setExplicitAmountLeftPercent(value: Int?) {
-        explicitAmountLeftPercent = value?.coerceIn(0, 100) // Ensure the value is between 0 and 100
+        explicitStartingPercent = value?.coerceIn(0, 100) // Ensure the value is between 0 and 100
     }
 
     // Dynamically calculate the remaining percentage
@@ -51,11 +51,11 @@ data class ShoppingItem(
 
 
     // Compute days passed since 'createdAt'
-    private fun getDaysPassed(): Int {
+    private fun getDaysPassed(): Double {
         val currentDate = Date()
         val createdAtDate = getCreatedAtDate()
         val timePassedMillis = currentDate.time - createdAtDate.time
-        return (timePassedMillis / (1000 * 60 * 60 * 24)).toInt()
+        return (timePassedMillis / (1000.0 * 60.0 * 60.0 * 24.0))
     }
 
     // Helper to parse 'createdAt' into a Date object
@@ -94,7 +94,7 @@ data class ShoppingItem(
     }
 
 
-    fun getFrequencyInDays(): Double {
+    private fun getFrequencyInDays(): Double {
         val frequencyRegex = Regex("(\\d+) per (\\w+)")
         val matchResult = frequencyRegex.matchEntire(frequency)
 

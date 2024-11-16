@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.iriawud.smartshoppinglist.network.Category
 import com.iriawud.smartshoppinglist.network.InventoryItem
 import com.iriawud.smartshoppinglist.network.RetrofitInstance
+import com.iriawud.smartshoppinglist.ui.CategoryRepository
 import com.iriawud.smartshoppinglist.ui.ItemViewModel
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 import retrofit2.Call
@@ -93,6 +94,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                     val categoryList = response.body() ?: emptyList()
                     val categoryMap = categoryList.associateBy({ it.category_id }, { it.category_name })
                     _categories.value = categoryMap
+                    CategoryRepository.setCategories(categoryList) // Save to singleton
                 } else {
                     _error.value = "Failed to fetch categories: ${response.message()}"
                 }
