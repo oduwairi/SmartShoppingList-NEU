@@ -48,6 +48,22 @@ class InventoryFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
+        // Observe predefined items and update the AutoCompleteTextView
+        viewModel.predefinedItems.observe(viewLifecycleOwner) { predefinedItems ->
+            GuiUtils.setupAutoCompleteTextView(
+                context = requireContext(),
+                autoCompleteTextView = binding.editTextNewItemInventory,
+                quantityEditText = binding.quantityEditText,
+                quantityUnitSpinner = binding.quantityUnitSpinner,
+                costEditText = binding.costEditText,
+                costUnitEditText = binding.costUnitEditText,
+                prioritySlider = binding.prioritySlider,
+                currentCategoryText = binding.currentCategoryText,
+                currentCategoryIcon = binding.setCategoryIcon,
+                predefinedItems = predefinedItems
+            )
+        }
+
         viewModel.initializeData()
 
         //setup dropdown menus with default values
@@ -104,10 +120,18 @@ class InventoryFragment : Fragment() {
             )
         }
 
-        //set on click listener for category card to open category selection dialog
+        // Set on click listener for category card to open category selection dialog
         binding.setCategoryCard.setOnClickListener {
             val dialog = CategorySelectionDialog { selectedCategory ->
                 binding.currentCategoryText.text = selectedCategory
+
+                // Dynamically set the category icon using GuiUtils
+                val drawableResId = GuiUtils.getDrawableResId(requireContext(), selectedCategory)
+                if (drawableResId != 0) {
+                    binding.setCategoryIcon.setImageResource(drawableResId)
+                } else {
+                    binding.setCategoryIcon.setImageResource(R.drawable.uncategorized) // Fallback icon
+                }
             }
             dialog.show(childFragmentManager, "CategorySelectionDialog")
         }

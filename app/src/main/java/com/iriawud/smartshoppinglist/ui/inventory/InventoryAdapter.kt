@@ -3,10 +3,12 @@ package com.iriawud.smartshoppinglist.ui.inventory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
+import com.iriawud.smartshoppinglist.ui.GuiUtils
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
 class InventoryAdapter(private var items: List<ShoppingItem>) :
@@ -18,6 +20,7 @@ class InventoryAdapter(private var items: List<ShoppingItem>) :
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val categoryName: TextView = itemView.findViewById(R.id.categoryNameText)
         val categoryItemsRecyclerView: RecyclerView = itemView.findViewById(R.id.categoryInnerRecyclerView)
+        val categoryImage : ImageView = itemView.findViewById(R.id.categoryImage)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -31,8 +34,16 @@ class InventoryAdapter(private var items: List<ShoppingItem>) :
         val category = groupedItems.keys.elementAt(position)
         val itemsInCategory = groupedItems[category] ?: emptyList()
 
-        // Set the category name
+        //set category name
         holder.categoryName.text = category
+
+        // Set the category image
+        val drawableResId = GuiUtils.getDrawableResId(holder.itemView.context, category)
+        if (drawableResId != 0) {
+            holder.categoryImage.setImageResource(drawableResId)
+        } else {
+            holder.categoryImage.setImageResource(R.drawable.ic_launcher_background) // Fallback icon
+        }
 
         // Set up the nested RecyclerView for items in this category
         holder.categoryItemsRecyclerView.apply {
