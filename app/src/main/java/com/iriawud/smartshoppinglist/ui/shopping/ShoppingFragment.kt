@@ -44,6 +44,8 @@ class ShoppingFragment : Fragment() {
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 
+        shoppingViewModel.initializeData()
+
         shoppingViewModel.items.observe(viewLifecycleOwner) { items ->
             adapter.updateItems(items)
             GuiUtils.updateEmptyStateView(
@@ -52,7 +54,28 @@ class ShoppingFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
-        shoppingViewModel.initializeData()
+        // Observe predefined items and update the AutoCompleteTextView
+        shoppingViewModel.predefinedItems.observe(viewLifecycleOwner) { predefinedItems ->
+            GuiUtils.setupAutoCompleteTextView(
+                context = requireContext(),
+                autoCompleteTextView = binding.editTextNewItem,
+                quantityEditText = binding.quantityEditText,
+                quantityUnitSpinner = binding.quantityUnitSpinner,
+                costEditText = binding.costEditText,
+                costUnitEditText = binding.costUnitEditText,
+                prioritySlider = binding.prioritySlider,
+                currentCategoryText = binding.currentCategoryText,
+                currentCategoryIcon = binding.setCategoryIcon,
+                predefinedItems = predefinedItems,
+                frequencyEditText = binding.frequencyEditText,
+                frequencyUnitSpinner = binding.frequencyUnitSpinner
+            )
+        }
+
+        inventoryViewModel.dueItems.observe(viewLifecycleOwner) { shoppingItem ->
+            shoppingViewModel.addItem(shoppingItem)
+        }
+
 
         // Setup swipe functionality using the ShoppingCardSwiper class
         val swipeHandler = ShoppingCardSwiper(
@@ -125,10 +148,18 @@ class ShoppingFragment : Fragment() {
             )
         }
 
-        //set on click listener for "set category" card to show the category selection dialog
+        // Set on click listener for category card to open category selection dialog
         binding.setCategoryCard.setOnClickListener {
             val dialog = CategorySelectionDialog { selectedCategory ->
                 binding.currentCategoryText.text = selectedCategory
+
+                // Dynamically set the category icon using GuiUtils
+                val drawableResId = GuiUtils.getDrawableResId(requireContext(), selectedCategory)
+                if (drawableResId != 0) {
+                    binding.setCategoryIcon.setImageResource(drawableResId)
+                } else {
+                    binding.setCategoryIcon.setImageResource(R.drawable.uncategorized) // Fallback icon
+                }
             }
             dialog.show(childFragmentManager, "CategorySelectionDialog")
         }

@@ -7,8 +7,10 @@ import com.iriawud.smartshoppinglist.ui.ItemViewModel
 import android.util.Log
 import com.iriawud.smartshoppinglist.network.Category
 import com.iriawud.smartshoppinglist.network.InventoryItem
+import com.iriawud.smartshoppinglist.network.PredefinedItem
 import com.iriawud.smartshoppinglist.network.RetrofitInstance
 import com.iriawud.smartshoppinglist.network.ShoppingListItem
+import com.iriawud.smartshoppinglist.ui.CategoryRepository
 import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,6 +24,9 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     private val _categories = MutableLiveData<Map<Int, String>>()
     val categories: LiveData<Map<Int, String>> get() = _categories
 
+    private val _predefinedItems = MutableLiveData<List<PredefinedItem>>()
+    val predefinedItems: LiveData<List<PredefinedItem>> get() = _predefinedItems
+
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
@@ -32,6 +37,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
         _items.value = mutableListOf() // Initialize with an empty list
         fetchCategories() // Fetch categories first
         fetchShoppingItems() // Fetch shopping items only after categories are fetched
+        fetchPredefinedItems() // Fetch predefined items after shopping items are fetched
     }
 
     // Fetch inventory items from backend
@@ -88,6 +94,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
                     val categoryList = response.body() ?: emptyList()
                     val categoryMap = categoryList.associateBy({ it.category_id }, { it.category_name })
                     _categories.value = categoryMap
+                    CategoryRepository.setCategories(categoryList) // Save to singleton
                 } else {
                     _error.value = "Failed to fetch categories: ${response.message()}"
                     Log.e("ShoppingViewModel", "Error fetching categories: ${response.message()}")
@@ -98,6 +105,28 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
                 _isLoading.value = false
                 _error.value = "Error fetching categories: ${t.message}"
                 Log.e("ShoppingViewModel", "API call failed: ${t.message}")
+            }
+        })
+    }
+
+    private fun fetchPredefinedItems() {
+        _isLoading.value = true
+        RetrofitInstance.api.getPredefinedItems().enqueue(object : Callback<List<PredefinedItem>> {
+            override fun onResponse(
+                call: Call<List<PredefinedItem>>,
+                response: Response<List<PredefinedItem>>
+            ) {
+                _isLoading.value = false
+                if (response.isSuccessful) {
+                    _predefinedItems.value = response.body() ?: emptyList()
+                } else {
+                    _error.value = "Failed to fetch predefined items: ${response.message()}"
+                }
+            }
+
+            override fun onFailure(call: Call<List<PredefinedItem>>, t: Throwable) {
+                _isLoading.value = false
+                _error.value = "Error fetching predefined items: ${t.message}"
             }
         })
     }

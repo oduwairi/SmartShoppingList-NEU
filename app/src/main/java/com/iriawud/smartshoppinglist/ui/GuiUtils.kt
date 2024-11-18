@@ -3,15 +3,23 @@ package com.iriawud.smartshoppinglist.ui
 import android.R
 import android.animation.ValueAnimator
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.compose.ui.text.toLowerCase
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
+import com.iriawud.smartshoppinglist.databinding.FragmentInventoryBinding
+import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
+import com.iriawud.smartshoppinglist.network.PredefinedItem
 import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 
@@ -103,7 +111,7 @@ object GuiUtils {
     ): Boolean {
         val currentHeight = expandableCard.height
         val newHeight = if (!isCardExpanded) {
-            MathUtils.dpToPx(500f, context) // Expanded height
+            MathUtils.dpToPx(510f, context) // Expanded height
         } else {
             MathUtils.dpToPx(50f, context) // Collapsed height
         }
@@ -191,6 +199,93 @@ object GuiUtils {
                 ArrayAdapter(context, R.layout.simple_spinner_item, frequencies)
             adapterFrequencies.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
             it.adapter = adapterFrequencies
+        }
+    }
+
+    fun setupAutoCompleteTextView(
+        context: Context,
+        autoCompleteTextView: AutoCompleteTextView,
+        quantityEditText: EditText,
+        quantityUnitSpinner: Spinner,
+        frequencyEditText: EditText? = null,
+        frequencyUnitSpinner: Spinner? = null,
+        costEditText: EditText,
+        costUnitEditText: EditText,
+        prioritySlider: Slider,
+        currentCategoryText: TextView,
+        currentCategoryIcon: ImageView,
+        predefinedItems: List<PredefinedItem>
+    ) {
+        val itemMap = predefinedItems.associateBy { it.item_name }
+
+        // Fetch categories once
+        val categoryMap = CategoryRepository.getCategories().associateBy { it.category_id }
+
+        // Set up adapter for AutoCompleteTextView
+        val adapter = PredefinedItemAdapter(context, predefinedItems)
+        autoCompleteTextView.setAdapter(adapter)
+
+        // Handle item selection
+        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
+            val selectedItem = adapter.getItem(position)
+            val itemDetails = itemMap[selectedItem?.item_name]
+
+            // Populate UI fields based on the selected item
+            itemDetails?.let {
+                autoCompleteTextView.setText(it.item_name)
+                quantityEditText.setText(it.average_quantity.toString())
+                quantityUnitSpinner.setSelection(
+                    (quantityUnitSpinner.adapter as ArrayAdapter<String>)
+                        .getPosition(it.default_quantity_unit.lowercase())
+                )
+                costEditText.setText(it.average_price.toString())
+                costUnitEditText.setText(it.default_currency)
+                prioritySlider.value = it.average_priority.toFloat()
+                currentCategoryText.text =
+                    categoryMap[it.category_id]?.category_name ?: "Uncategorized"
+                setDrawable(context, currentCategoryIcon, it.image_url)
+                // Calculate frequency and set frequency-related fields
+                val frequencyString = MathUtils.calculateFrequencyFromConsumptionRate(
+                    consumptionRate = it.average_consumption_rate,
+                    quantityToBuy = it.average_quantity,
+                    consumptionUnit = it.default_consumption_unit
+                )
+
+                // Extract the numeric value and unit from the string
+                val frequencyValue = frequencyString.substringBefore(" per ").toInt()
+                val frequencyUnit = frequencyString.substringAfter(" per ").capitalize()
+
+                // Set the frequency value and unit
+                frequencyEditText?.setText(frequencyValue.toString())
+                frequencyUnitSpinner?.setSelection(
+                    (frequencyUnitSpinner.adapter as ArrayAdapter<String>)
+                        .getPosition(frequencyUnit)
+                )
+            }
+        }
+    }
+
+    /**
+     * Get the drawable resource ID for a given category name.
+     * The function converts the category name into a drawable resource name.
+     *
+     * @param context The application or activity context.
+     * @param categoryName The name of the category (e.g., "Dairy Products").
+     * @return The resource ID of the drawable or 0 if not found.
+     */
+    fun getDrawableResId(context: Context, categoryName: String): Int {
+        val drawableName = categoryName.lowercase().replace(" ", "_")
+        return context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+    }
+
+    fun setDrawable(context: Context, imageView: ImageView, resourceName: String) {
+        val fallbackResId = com.iriawud.smartshoppinglist.R.drawable.uncategorized
+        val drawableResId = getDrawableResId(context, resourceName)
+        if (drawableResId != 0) {
+            imageView.setImageResource(drawableResId)
+        } else {
+            // Use the fallback image if no matching drawable is found
+            imageView.setImageResource(fallbackResId)
         }
     }
 }
