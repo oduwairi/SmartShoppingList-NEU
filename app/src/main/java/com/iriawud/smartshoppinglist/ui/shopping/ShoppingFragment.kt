@@ -58,10 +58,24 @@ class ShoppingFragment : Fragment() {
         shoppingViewModel.predefinedItems.observe(viewLifecycleOwner) { predefinedItems ->
             GuiUtils.setupAutoCompleteTextView(
                 context = requireContext(),
-                binding = binding,
-                predefinedItems = predefinedItems
+                autoCompleteTextView = binding.editTextNewItem,
+                quantityEditText = binding.quantityEditText,
+                quantityUnitSpinner = binding.quantityUnitSpinner,
+                costEditText = binding.costEditText,
+                costUnitEditText = binding.costUnitEditText,
+                prioritySlider = binding.prioritySlider,
+                currentCategoryText = binding.currentCategoryText,
+                currentCategoryIcon = binding.setCategoryIcon,
+                predefinedItems = predefinedItems,
+                frequencyEditText = binding.frequencyEditText,
+                frequencyUnitSpinner = binding.frequencyUnitSpinner
             )
         }
+
+        inventoryViewModel.dueItems.observe(viewLifecycleOwner) { shoppingItem ->
+            shoppingViewModel.addItem(shoppingItem)
+        }
+
 
         // Setup swipe functionality using the ShoppingCardSwiper class
         val swipeHandler = ShoppingCardSwiper(

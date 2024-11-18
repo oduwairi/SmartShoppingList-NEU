@@ -21,7 +21,7 @@
                 android:id="@+id/bottomOrangeLineSuggestion"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                app:cardBackgroundColor="@color/orange_main"
+                app:cardBackgroundColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -31,10 +31,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/albert_sans"
                 android:text="Milk"
                 android:textColor="@color/black"
+                android:textSize="22sp"
                 app:layout_constraintStart_toEndOf="@id/suggestedItemImage"
                 app:layout_constraintTop_toTopOf="@id/suggestedItemImage" />
 
@@ -44,14 +45,14 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/albert_sans"
                 android:text="Dairy Products"
-                android:textSize="8sp"
+                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@id/suggestedItemText"
                 app:layout_constraintTop_toBottomOf="@id/suggestedItemText" />
 
             <ImageView
                 android:id="@+id/suggestedItemImage"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"

@@ -302,6 +302,7 @@
                             android:layout_width="60dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
+                            app:cardBackgroundColor="@color/orange_main"
                             app:cardCornerRadius="10dp"
                             app:cardElevation="0dp"
                             app:layout_constraintStart_toEndOf="@id/aiModeButton"
@@ -315,7 +316,7 @@
                                 android:fontFamily="@font/albert_sans_bold"
                                 android:padding="2dp"
                                 android:text="Manual"
-                                android:textColor="@color/black"
+                                android:textColor="@color/white_items"
                                 android:textSize="16sp" />
                         </androidx.cardview.widget.CardView>
 
@@ -323,7 +324,7 @@
                             android:id="@+id/aiModeButton"
                             android:layout_width="40dp"
                             android:layout_height="wrap_content"
-                            app:cardBackgroundColor="@color/orange_main"
+                            app:cardBackgroundColor="@color/white_items"
                             app:cardCornerRadius="10dp"
                             app:cardElevation="0dp"
                             app:layout_constraintStart_toStartOf="parent"
@@ -337,7 +338,7 @@
                                 android:fontFamily="@font/albert_sans_bold"
                                 android:padding="2dp"
                                 android:text="AI"
-                                android:textColor="@color/white_background"
+                                android:textColor="@color/black"
                                 android:textSize="16sp" />
                         </androidx.cardview.widget.CardView>
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -726,13 +727,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/editTextNewItemInventory"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
         android:layout_marginTop="11dp"
         android:layout_marginEnd="5dp"
+        android:completionThreshold="1"
+        android:dropDownHeight="wrap_content"
         android:fontFamily="@font/albert_sans"
         android:hint="I currently have...."
         android:textColorHint="@color/hint_text"

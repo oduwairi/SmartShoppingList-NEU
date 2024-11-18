@@ -48,6 +48,22 @@ class InventoryFragment : Fragment() {
                 isEmptyCheck = { items.isEmpty() })
         }
 
+        // Observe predefined items and update the AutoCompleteTextView
+        viewModel.predefinedItems.observe(viewLifecycleOwner) { predefinedItems ->
+            GuiUtils.setupAutoCompleteTextView(
+                context = requireContext(),
+                autoCompleteTextView = binding.editTextNewItemInventory,
+                quantityEditText = binding.quantityEditText,
+                quantityUnitSpinner = binding.quantityUnitSpinner,
+                costEditText = binding.costEditText,
+                costUnitEditText = binding.costUnitEditText,
+                prioritySlider = binding.prioritySlider,
+                currentCategoryText = binding.currentCategoryText,
+                currentCategoryIcon = binding.setCategoryIcon,
+                predefinedItems = predefinedItems
+            )
+        }
+
         viewModel.initializeData()
 
         //setup dropdown menus with default values

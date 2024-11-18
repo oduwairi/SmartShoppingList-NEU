@@ -27,13 +27,8 @@ class PredefinedItemAdapter(
             //set suggestion text
             name.text = it.item_name
 
-            val imageResId = GuiUtils.getDrawableResId(context, it.image_url)
-            if (imageResId != 0) {
-                icon.setImageResource(imageResId)
-            } else {
-                // Use a fallback image if no matching drawable is found
-                icon.setImageResource(R.drawable.uncategorized)
-            }
+            //set suggestion icon
+            GuiUtils.setDrawable(context, icon, it.image_url)
 
             // Fetch category name from CategoryRepository
             val categoryMap = CategoryRepository.getCategories().associateBy({ it.category_id }, { it.category_name })

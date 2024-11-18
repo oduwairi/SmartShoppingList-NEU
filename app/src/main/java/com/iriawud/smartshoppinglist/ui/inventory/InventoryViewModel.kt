@@ -6,21 +6,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.iriawud.smartshoppinglist.network.Category
 import com.iriawud.smartshoppinglist.network.InventoryItem
+import com.iriawud.smartshoppinglist.network.PredefinedItem
 import com.iriawud.smartshoppinglist.network.RetrofitInstance
 import com.iriawud.smartshoppinglist.ui.CategoryRepository
 import com.iriawud.smartshoppinglist.ui.ItemViewModel
+import com.iriawud.smartshoppinglist.ui.SingleLiveEvent
 import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class InventoryViewModel : ViewModel(), ItemViewModel {
 
     private val _items = MutableLiveData<MutableList<ShoppingItem>>()
     val items: LiveData<MutableList<ShoppingItem>> get() = _items
+
+    private val _predefinedItems = MutableLiveData<List<PredefinedItem>>()
+    val predefinedItems: LiveData<List<PredefinedItem>> get() = _predefinedItems
+
+    private val _dueItems = SingleLiveEvent<ShoppingItem>()
+    val dueItems: LiveData<ShoppingItem> get() = _dueItems
 
     private val _categories = MutableLiveData<Map<Int, String>>()
     val categories: LiveData<Map<Int, String>> get() = _categories
@@ -31,6 +36,8 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
+    private val processedItems = mutableSetOf<String>() // Track processed items by name or ID
+
     init {
         initializeData()
     }
@@ -39,6 +46,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
         _items.value = mutableListOf() // Initialize with an empty list
         fetchCategories() // Fetch categories first
         fetchInventoryItems() // Fetch shopping items only after categories are fetched
+        fetchPredefinedItems()
     }
 
     // Fetch inventory items from backend
@@ -55,7 +63,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                     val fetchedItems = response.body()?.map { inventoryItem ->
                         val createdAt = MathUtils.convertToSimpleDateFormat(inventoryItem.stocked_at)
                         val categoryName = categoryMap[inventoryItem.category_id] ?: "Uncategorized"
-                        val frequency = MathUtils.calculateFrequency(
+                        val frequency = MathUtils.calculateFrequencyFromRestockDate(
                             inventoryItem.stocked_at ?: ShoppingItem.getCurrentTimestamp(),
                             inventoryItem.restock_date
                         )
@@ -72,6 +80,12 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                         )
                     } ?: emptyList()
                     _items.value = fetchedItems.toMutableList()
+                    fetchedItems.forEach { inventoryItem ->
+                        if (inventoryItem.amountLeftPercent == 0 && !processedItems.contains(inventoryItem.name)) {
+                            processedItems.add(inventoryItem.name) // Mark item as processed
+                            _dueItems.value = inventoryItem
+                        }
+                    }
                 } else {
                     _error.value = "Failed to fetch items: ${response.message()}"
                 }
@@ -103,6 +117,28 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
             override fun onFailure(call: Call<List<Category>>, t: Throwable) {
                 _isLoading.value = false
                 _error.value = "Error fetching categories: ${t.message}"
+            }
+        })
+    }
+
+    private fun fetchPredefinedItems() {
+        _isLoading.value = true
+        RetrofitInstance.api.getPredefinedItems().enqueue(object : Callback<List<PredefinedItem>> {
+            override fun onResponse(
+                call: Call<List<PredefinedItem>>,
+                response: Response<List<PredefinedItem>>
+            ) {
+                _isLoading.value = false
+                if (response.isSuccessful) {
+                    _predefinedItems.value = response.body() ?: emptyList()
+                } else {
+                    _error.value = "Failed to fetch predefined items: ${response.message()}"
+                }
+            }
+
+            override fun onFailure(call: Call<List<PredefinedItem>>, t: Throwable) {
+                _isLoading.value = false
+                _error.value = "Error fetching predefined items: ${t.message}"
             }
         })
     }

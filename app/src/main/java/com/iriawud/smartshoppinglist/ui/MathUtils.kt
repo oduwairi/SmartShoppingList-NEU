@@ -14,7 +14,7 @@ object MathUtils {
      * @param restockDate The restock date as a string.
      * @return Frequency as a string.
      */
-    fun calculateFrequency(stockedAt: String, restockDate: String?): String {
+    fun calculateFrequencyFromRestockDate(stockedAt: String, restockDate: String?): String {
         if (restockDate.isNullOrEmpty()) return "Not set"
 
         return try {
@@ -40,6 +40,37 @@ object MathUtils {
         } catch (e: Exception) {
             Log.e("MathUtils", "Error calculating frequency: ${e.message}", e)
             "Not set"
+        }
+    }
+
+    fun calculateFrequencyFromConsumptionRate(
+        consumptionRate: Double,
+        quantityToBuy: Double,
+        consumptionUnit: String
+    ): String {
+        // Handle edge cases for invalid inputs
+        if (consumptionRate <= 0 || quantityToBuy <= 0) return "Not set"
+
+        // Parse the unit from the consumptionUnit (e.g., "Lt per week")
+        val unitMultiplier = when {
+            consumptionUnit.contains("day", ignoreCase = true) -> 1.0 // 1 day
+            consumptionUnit.contains("week", ignoreCase = true) -> 7.0 // 1 week
+            consumptionUnit.contains("month", ignoreCase = true) -> 30.0 // 1 month
+            else -> return "Not set" // Unsupported unit
+        }
+
+        // Adjust consumption rate to a per-day rate
+        val dailyConsumptionRate = consumptionRate / unitMultiplier
+
+        // Calculate the days until the quantity will be consumed
+        val days = quantityToBuy / dailyConsumptionRate
+
+        // Determine the best unit (e.g., Days, Weeks, Months) and calculate the frequency
+        return when {
+            days < 1 -> "${(1 / days).toInt()} per day"
+            days < 7 -> "${(7 / days).toInt()} per week"
+            days < 30 -> "${(30 / days).toInt()} per month"
+            else -> "${(days / 30).toInt()} per month"
         }
     }
 
