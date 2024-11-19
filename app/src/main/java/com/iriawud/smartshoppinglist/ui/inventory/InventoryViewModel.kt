@@ -80,6 +80,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
 
                     // Map InventoryItem to Item
                     Item(
+                        id = inventoryItem.item_id,
                         name = inventoryItem.item_name,
                         quantity = inventoryItem.quantity_stocked.toString() + " " + inventoryItem.quantity_unit,
                         price = inventoryItem.price?.let { "$it ${inventoryItem.currency}" } ?: "Not set",
@@ -225,7 +226,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                 // Create the InventoryItem object
                 val inventoryItem = InventoryItem(
                     inventory_id = 1, // Adjust inventory_id logic as needed
-                    item_id = null,
+                    item_id = item.id,
                     item_name = item.name,
                     quantity_stocked = quantityStocked,
                     quantity_unit = quantityUnit,

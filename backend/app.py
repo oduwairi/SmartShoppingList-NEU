@@ -80,6 +80,7 @@ def add_inventory_item():
     try:
         data = request.json
         inventory_id = data.get('inventory_id')
+        item_id = data.get('item_id')
         item_name = data.get('item_name')
         quantity_stocked = data.get('quantity_stocked')
         quantity_unit = data.get('quantity_unit')
@@ -92,16 +93,15 @@ def add_inventory_item():
         restock_date = data.get('restock_date')
 
         db = get_db_connection()
-        cursor = db.cursor()
-        
-        # Use ON DUPLICATE KEY UPDATE
+        cursor = db.cursor(dictionary=True)
+
+        # Insert or update the inventory item
         query = """
             INSERT INTO InventoryItems (
-                inventory_id, item_name, quantity_stocked, quantity_unit, price, currency,
+                inventory_id, item_id, item_name, quantity_stocked, quantity_unit, price, currency,
                 image_url, priority, category_id, stocked_at, restock_date
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
-                inventory_id = VALUES(inventory_id),
                 quantity_stocked = VALUES(quantity_stocked),
                 quantity_unit = VALUES(quantity_unit),
                 price = VALUES(price),
@@ -112,19 +112,21 @@ def add_inventory_item():
                 stocked_at = VALUES(stocked_at),
                 restock_date = VALUES(restock_date)
         """
-        
         cursor.execute(query, (
-            inventory_id, item_name, quantity_stocked, quantity_unit, price, currency,
+            inventory_id, item_id, item_name, quantity_stocked, quantity_unit, price, currency,
             image_url, priority, category_id, stocked_at, restock_date
         ))
+
         db.commit()
         cursor.close()
         db.close()
-        
+
         return jsonify({"message": "Inventory item added or updated successfully!"}), 201
+
     except Exception as e:
-        traceback.print_exc()  # Print the stack trace in the server log
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.route('/shopping_items', methods=['GET'])
@@ -160,12 +162,26 @@ def add_shopping_item():
 
         db = get_db_connection()
         cursor = db.cursor()
+        
+        # Insert or update the shopping item
         query = """
             INSERT INTO ShoppingItems (
                 list_id, item_name, quantity, quantity_unit, price, currency,
                 image_url, priority, frequency_value, frequency_unit, category_id, created_at
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                quantity = VALUES(quantity),
+                quantity_unit = VALUES(quantity_unit),
+                price = VALUES(price),
+                currency = VALUES(currency),
+                image_url = VALUES(image_url),
+                priority = VALUES(priority),
+                frequency_value = VALUES(frequency_value),
+                frequency_unit = VALUES(frequency_unit),
+                category_id = VALUES(category_id),
+                created_at = VALUES(created_at)
         """
+        
         cursor.execute(query, (
             list_id, item_name, quantity, quantity_unit, price, currency,
             image_url, priority, frequency_value, frequency_unit, category_id, created_at
@@ -173,10 +189,12 @@ def add_shopping_item():
         db.commit()
         cursor.close()
         db.close()
-        return jsonify({"message": "Shopping item added successfully!"}), 201
+        
+        return jsonify({"message": "Shopping item added or updated successfully!"}), 201
     except Exception as e:
         traceback.print_exc()  # Print the stack trace in the server log
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/shopping_items/<int:item_id>', methods=['DELETE'])
 def delete_shopping_item(item_id):
