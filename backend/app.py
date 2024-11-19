@@ -5,9 +5,11 @@ import traceback
 import mysql.connector
 import pandas as pd
 import pickle
-from sklearn.linear_model import LinearRegression
+from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
+
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow requests from your Android app
@@ -110,9 +112,9 @@ def add_inventory_item():
             cursor.execute(history_query, (
                 existing_item['item_id'],
                 existing_item.get('stocked_at', None),
-                existing_item.get('price', 0),
-                existing_item.get('quantity_stocked', 0),
-                existing_item.get('priority', 1)
+                existing_item.get('price', None),
+                existing_item.get('quantity_stocked', None),
+                existing_item.get('priority', 5)
             ))
 
         # Insert or update the inventory item
@@ -255,112 +257,132 @@ def train_model():
         # Connect to the database
         db = get_db_connection()
         query = """
-            SELECT stocked_at AS purchase_date, quantity_stocked AS quantity, price, priority, category_id
-            FROM InventoryItems
+            SELECT 
+                restock_history, 
+                price_history, 
+                quantity_history, 
+                priority_history 
+            FROM inventory_item_history
         """
         data = pd.read_sql(query, db)
         db.close()
 
-        # Feature Engineering
-        data['purchase_date'] = pd.to_datetime(data['purchase_date'])
-        data['purchase_interval'] = data['purchase_date'].diff().dt.days
+        # Convert restock_history to datetime and calculate intervals
+        data['restock_history'] = pd.to_datetime(data['restock_history'])
+        data['restock_interval'] = data['restock_history'].diff().dt.seconds / 60  # Interval in minutes
+
+        # Drop rows with missing restock intervals
+        data = data.dropna(subset=['restock_interval'])
+
+        # Check if there's enough data
+        if len(data) < 2:  # At least 2 rows needed
+            return jsonify({"error": "Not enough valid historical data to train the model"}), 400
+
+        # Prepare features
+        data['lag_1'] = data['restock_interval'].shift(1).fillna(0)
+        data['lag_2'] = data['restock_interval'].shift(2).fillna(0)
+        features = ['lag_1', 'lag_2', 'price_history', 'quantity_history', 'priority_history']
         data = data.dropna()
 
-        # Check if there's enough data to train
-        if data.empty:
-            return jsonify({"error": "Not enough data to train the model"}), 400
-
-        # One-Hot Encode `category_id`
-        data = pd.get_dummies(data, columns=['category_id'], prefix='category', drop_first=True)
-
-        # Define features and target
-        features = ['quantity', 'price', 'priority'] + [col for col in data.columns if col.startswith('category_')]
-        target = 'purchase_interval'
         X = data[features]
-        y = data[target]
+        y = data['restock_interval']
 
-        # Train/Test Split
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        # Train on the full dataset (no train-test split)
+        model = XGBRegressor(
+            n_estimators=50,  # Reduce trees for small data
+            max_depth=3,      # Limit tree depth
+            learning_rate=0.1,
+            reg_alpha=0.1,    # L1 regularization
+            reg_lambda=1.0,   # L2 regularization
+            random_state=42
+        )
+        model.fit(X, y)
 
-        # Train the model
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-
-        # Evaluate the model
-        predictions = model.predict(X_test)
-        mae = mean_absolute_error(y_test, predictions)
-
-        # Save the model and features
-        with open('regression_model.pkl', 'wb') as f:
+        # Save the model and feature names
+        with open('xgboost_model.pkl', 'wb') as f:
             pickle.dump(model, f)
 
-        # Save feature names for prediction consistency
         with open('model_features.pkl', 'wb') as f:
             pickle.dump(features, f)
 
-        return jsonify({"message": "Model trained successfully!", "MAE": mae}), 200
+        return jsonify({"message": "Model trained successfully!"}), 200
 
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.route('/predict_interval', methods=['POST'])
 def predict_interval():
     try:
-        # Load the trained model and feature names
-        with open('regression_model.pkl', 'rb') as f:
+        # Load the trained model and feature list
+        with open('xgboost_model.pkl', 'rb') as f:
             model = pickle.load(f)
+
         with open('model_features.pkl', 'rb') as f:
             feature_names = pickle.load(f)
 
         # Get input data from the request
         data = request.json
-        last_purchase_date = pd.to_datetime(data.get('last_purchase_date'))
+        item_id = data.get('item_id')
 
-        # Validate input
-        category_id = data.get('category_id', None)
-        if category_id is None:
-            return jsonify({"error": "category_id is required"}), 400
+        # Fetch all historical data for the given item_id
+        db = get_db_connection()
+        query = """
+            SELECT 
+                restock_history, 
+                price_history, 
+                quantity_history, 
+                priority_history 
+            FROM inventory_item_history
+            WHERE item_id = %s
+            ORDER BY restock_history ASC
+        """
+        historical_data = pd.read_sql(query, db, params=(item_id,))
+        db.close()
 
-        # Prepare features
-        input_features = {
-            'quantity': data.get('quantity', 0),
-            'price': data.get('price', 0),
-            'priority': data.get('priority', 0)
+        if historical_data.empty:
+            return jsonify({"error": "No historical data found for the given item_id"}), 400
+
+        # Preprocess historical data
+        historical_data['restock_history'] = pd.to_datetime(historical_data['restock_history'])
+        historical_data['restock_interval'] = historical_data['restock_history'].diff().dt.seconds / 60
+
+        # Handle small datasets
+        historical_data['lag_1'] = historical_data['restock_interval'].shift(1).fillna(0)
+        historical_data['lag_2'] = historical_data['restock_interval'].shift(2).fillna(0)
+
+        # Use the most recent data point
+        recent_data = historical_data.iloc[-1]
+
+        # Prepare features for prediction
+        features = {
+            'lag_1': recent_data['lag_1'],
+            'lag_2': recent_data['lag_2'],
+            'price_history': recent_data['price_history'],
+            'quantity_history': recent_data['quantity_history'],
+            'priority_history': recent_data['priority_history']
         }
 
-        # Handle one-hot encoding for category_id
-        for feature in feature_names:
-            if feature.startswith('category_'):
-                input_features[feature] = 1 if feature == f'category_{category_id}' else 0
-
-        # Convert input to DataFrame
-        features_df = pd.DataFrame([input_features])[feature_names]
+        # Ensure all features match the model
+        features_df = pd.DataFrame([features])[feature_names]
 
         # Predict interval
         predicted_interval = model.predict(features_df)[0]
 
-        # Handle invalid predictions
-        if predicted_interval <= 0:
-            return jsonify({"error": "Predicted interval is invalid"}), 400
+        # Convert to float for JSON serialization
+        predicted_interval = float(predicted_interval)
 
-        # Calculate restock date
-        restock_date = last_purchase_date + pd.to_timedelta(predicted_interval, unit='D')
-
-        # Calculate frequency value
-        frequency_value = predicted_interval 
-
-        # Return the result
         return jsonify({
-            "predicted_interval": predicted_interval,
-            "restock_date": restock_date.strftime('%Y-%m-%d'),
-            "frequency_value": frequency_value
+            "predicted_interval": predicted_interval
         }), 200
 
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+
+
 
 # Run the Flask server
 if __name__ == '__main__':

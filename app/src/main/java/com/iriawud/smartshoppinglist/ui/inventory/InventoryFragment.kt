@@ -34,7 +34,6 @@ class InventoryFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
 
-
         adapter = InventoryAdapter(mutableListOf())
         binding.inventoryRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.inventoryRecyclerView.adapter = adapter
