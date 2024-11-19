@@ -1,7 +1,7 @@
 package com.iriawud.smartshoppinglist.ui
 
-import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.Item
 
 interface ItemViewModel {
-    fun addItem(item: ShoppingItem)
+    fun addItem(item: Item)
 }

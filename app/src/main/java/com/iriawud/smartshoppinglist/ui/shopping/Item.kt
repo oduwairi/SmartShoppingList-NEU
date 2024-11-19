@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-data class ShoppingItem(
+data class Item(
     val id:Int ?= null,
     val name: String = "Unknown",
     var quantity: String = "1 pcs",

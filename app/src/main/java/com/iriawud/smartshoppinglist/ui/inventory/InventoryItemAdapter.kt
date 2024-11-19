@@ -12,11 +12,11 @@ import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.ui.CategoryRepository
 import com.iriawud.smartshoppinglist.ui.GuiUtils
 import com.iriawud.smartshoppinglist.ui.shopping.PriorityColor
-import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.Item
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class InventoryItemAdapter(private val items: List<ShoppingItem>) :
+class InventoryItemAdapter(private val items: List<Item>) :
     RecyclerView.Adapter<InventoryItemAdapter.ItemViewHolder>() {
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

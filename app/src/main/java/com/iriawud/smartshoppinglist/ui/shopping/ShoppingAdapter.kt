@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
 
 class ShoppingAdapter(
-    private var items: MutableList<ShoppingItem>,
+    private var items: MutableList<Item>,
 ) : RecyclerView.Adapter<ShoppingAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -55,11 +55,11 @@ class ShoppingAdapter(
 
     override fun getItemCount() = items.size
 
-    fun getItemAtPosition(position: Int): ShoppingItem {
+    fun getItemAtPosition(position: Int): Item {
         return items[position]
     }
 
-    fun updateItems(newItems: MutableList<ShoppingItem>) {
+    fun updateItems(newItems: MutableList<Item>) {
         items = newItems
         notifyDataSetChanged()
     }

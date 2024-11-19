@@ -75,7 +75,7 @@ class InventoryFragment : Fragment() {
             frequencyUnitSpinner = null
         )
 
-        //set on click listener for "add" button to create a ShoppingItem class
+        //set on click listener for "add" button to create a Item class
         binding.buttonAddItem.setOnClickListener {
             GuiUtils.addItem(
                 binding.editTextNewItemInventory.text.toString().trim(),

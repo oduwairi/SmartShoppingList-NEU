@@ -102,7 +102,7 @@ class ShoppingFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.shoppingRecyclerView)
 
-        //set on click listener for "add" button to create a ShoppingItem class
+        //set on click listener for "add" button to create a Item class
         binding.buttonAddItem.setOnClickListener {
             GuiUtils.addItem(
                 binding.editTextNewItem.text.toString().trim(),

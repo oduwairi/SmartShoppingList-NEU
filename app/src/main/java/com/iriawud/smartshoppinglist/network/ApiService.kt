@@ -1,14 +1,13 @@
 package com.iriawud.smartshoppinglist.network
 
-import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-
+// Data classes remain unchanged
 data class InventoryItem(
     val item_id: Int? = null,
     val inventory_id: Int,
@@ -25,19 +24,19 @@ data class InventoryItem(
 )
 
 data class ShoppingListItem(
-    val item_id: Int? = null,              // Primary key (auto-incremented, nullable for POST)
-    val list_id: Int,                      // Foreign key referencing the shopping list
-    val item_name: String,                 // Name of the item
-    val quantity: Double,                  // Quantity of the item
-    val quantity_unit: String?,            // Unit of measurement (e.g., kg, pcs)
-    val price: Double?,                    // Price of the item (nullable)
-    val currency: String?,                 // Currency (e.g., USD, EUR)
-    val image_url: String,                 // Image URL
-    val priority: Int,                     // Priority level
-    val frequency_value: Int?,             // Frequency value
-    val frequency_unit: String?,           // Frequency unit (e.g., day, week)
-    val category_id: Int,                  // Foreign key referencing the category table
-    val added_at: String                 // Timestamp when the item was created
+    val item_id: Int? = null,
+    val list_id: Int,
+    val item_name: String,
+    val quantity: Double,
+    val quantity_unit: String?,
+    val price: Double?,
+    val currency: String?,
+    val image_url: String,
+    val priority: Int,
+    val frequency_value: Int?,
+    val frequency_unit: String?,
+    val category_id: Int,
+    val added_at: String
 )
 
 data class Category(
@@ -61,35 +60,37 @@ data class PredefinedItem(
     val default_consumption_unit: String
 )
 
-
 interface ApiService {
-    // GET all inventory items
+
+    // GET all inventory items (coroutines)
     @GET("/inventory_items")
-    fun getInventoryItems(): Call<List<InventoryItem>>
+    suspend fun getInventoryItems(): Response<List<InventoryItem>>
 
     // POST a new inventory item
     @POST("/inventory_items")
-    fun addInventoryItem(@Body item: InventoryItem): Call<Void>
+    suspend fun addInventoryItem(@Body item: InventoryItem): Response<Void>
 
+    // GET all categories
     @GET("/categories")
-    fun getCategories(): Call<List<Category>>
+    suspend fun getCategories(): Response<List<Category>>
 
+    // POST a new category
     @POST("/categories")
-    fun addCategory(@Body category: Category): Call<Void>
+    suspend fun addCategory(@Body category: Category): Response<Void>
 
     // GET all shopping items
     @GET("/shopping_items")
-    fun getShoppingItems(): Call<List<ShoppingListItem>>
+    suspend fun getShoppingItems(): Response<List<ShoppingListItem>>
 
     // POST a new shopping item
     @POST("/shopping_items")
-    fun addShoppingItem(@Body item: ShoppingListItem): Call<Void>
+    suspend fun addShoppingItem(@Body item: ShoppingListItem): Response<Void>
 
     // DELETE a shopping item by ID
     @DELETE("/shopping_items/{id}")
-    fun deleteShoppingItem(@Path("id") itemId: Int): Call<Void>
+    suspend fun deleteShoppingItem(@Path("id") itemId: Int): Response<Void>
 
     // GET all predefined items
     @GET("/predefined_items")
-    fun getPredefinedItems(): Call<List<PredefinedItem>>
+    suspend fun getPredefinedItems(): Response<List<PredefinedItem>>
 }
