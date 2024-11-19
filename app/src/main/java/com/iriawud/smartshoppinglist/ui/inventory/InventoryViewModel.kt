@@ -243,8 +243,18 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                 val response = RetrofitInstance.api.addInventoryItem(inventoryItem)
 
                 if (response.isSuccessful) {
-                    // Add item locally on success
-                    addItemLocally(item)
+                    // Check if the item already exists locally
+                    val existingItemIndex = _items.value?.indexOfFirst { it.name.lowercase().trim() == item.name.lowercase().trim() }
+
+                    if (existingItemIndex != null && existingItemIndex != -1) {
+                        // Update the existing item
+                        val updatedList = _items.value?.toMutableList()
+                        updatedList?.set(existingItemIndex, item)
+                        _items.postValue(updatedList)
+                    } else {
+                        // Add the item locally if it's new
+                        addItemLocally(item)
+                    }
                 } else {
                     // Handle unsuccessful response
                     _error.postValue("Failed to add item: ${response.message()}")

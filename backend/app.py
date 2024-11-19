@@ -95,6 +95,26 @@ def add_inventory_item():
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
 
+        # Check if the item exists using item_name and category_id for uniqueness
+        check_query = "SELECT * FROM InventoryItems WHERE LOWER(item_name) = %s AND category_id = %s"
+        cursor.execute(check_query, (item_name.lower(), category_id))
+        existing_item = cursor.fetchone()
+
+        # If the item exists, log the update in the history table
+        if existing_item:
+            history_query = """
+                INSERT INTO inventory_item_history (
+                    item_id, restock_history, price_history, quantity_history, priority_history
+                ) VALUES (%s, %s, %s, %s, %s)
+            """
+            cursor.execute(history_query, (
+                existing_item['item_id'],
+                existing_item.get('stocked_at', None),
+                existing_item.get('price', 0),
+                existing_item.get('quantity_stocked', 0),
+                existing_item.get('priority', 1)
+            ))
+
         # Insert or update the inventory item
         query = """
             INSERT INTO InventoryItems (

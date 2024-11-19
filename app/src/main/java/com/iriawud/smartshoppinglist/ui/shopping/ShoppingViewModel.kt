@@ -226,7 +226,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
 
                 if (response.isSuccessful) {
                     // Check if the item already exists locally
-                    val existingItemIndex = _items.value?.indexOfFirst { it.id == item.id }
+                    val existingItemIndex = _items.value?.indexOfFirst { it.name.lowercase().trim() == item.name.lowercase().trim() }
 
                     if (existingItemIndex != null && existingItemIndex != -1) {
                         // Update the existing item
