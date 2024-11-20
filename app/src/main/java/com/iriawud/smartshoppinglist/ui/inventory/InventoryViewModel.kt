@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.iriawud.smartshoppinglist.network.Category
 import com.iriawud.smartshoppinglist.network.InventoryItem
 import com.iriawud.smartshoppinglist.network.PredefinedItem
 import com.iriawud.smartshoppinglist.network.RetrofitInstance
@@ -16,9 +15,6 @@ import com.iriawud.smartshoppinglist.ui.shopping.Item
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class InventoryViewModel : ViewModel(), ItemViewModel {
 
