@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.ui.GuiUtils
-import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.Item
 
-class InventoryAdapter(private var items: List<ShoppingItem>) :
+class InventoryAdapter(private var items: List<Item>) :
     RecyclerView.Adapter<InventoryAdapter.CategoryViewHolder>() {
 
     // This variable should be mutable so it updates with each data change
-    private var groupedItems: Map<String, List<ShoppingItem>> = items.groupBy { it.category }
+    private var groupedItems: Map<String, List<Item>> = items.groupBy { it.category }
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val categoryName: TextView = itemView.findViewById(R.id.categoryNameText)
@@ -54,7 +54,7 @@ class InventoryAdapter(private var items: List<ShoppingItem>) :
 
     override fun getItemCount() = groupedItems.size
 
-    fun updateItems(newItems: List<ShoppingItem>) {
+    fun updateItems(newItems: List<Item>) {
         // Update items and re-group by category
         items = newItems
         groupedItems = items.groupBy { it.category } // Re-group items

@@ -3,7 +3,6 @@ package com.iriawud.smartshoppinglist.ui
 import android.R
 import android.animation.ValueAnimator
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -14,14 +13,11 @@ import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.compose.ui.text.toLowerCase
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
-import com.iriawud.smartshoppinglist.databinding.FragmentInventoryBinding
-import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
 import com.iriawud.smartshoppinglist.network.PredefinedItem
 import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
-import com.iriawud.smartshoppinglist.ui.shopping.ShoppingItem
+import com.iriawud.smartshoppinglist.ui.shopping.Item
 
 object GuiUtils {
     fun addItem(
@@ -43,20 +39,20 @@ object GuiUtils {
         isInputBarExpanded: Boolean
     ): Boolean {
         if (newItemName.isNotBlank()) {
-            val newItem = ShoppingItem(
+            val newItem = Item(
                 name = newItemName,
                 quantity = if (newItemQuantity.isNotBlank() && newItemQuantityUnit.isNotBlank())
                     "$newItemQuantity $newItemQuantityUnit"
-                else ShoppingItem().quantity, // Default quantity
+                else Item().quantity, // Default quantity
                 category = newItemCategory,
                 price = if (newItemCost.isNotBlank() && newItemCostUnit.isNotBlank())
                     "$newItemCost $newItemCostUnit"
-                else ShoppingItem().price,
-                priority = newItemPriority ?: ShoppingItem().priority, // Default priority
+                else Item().price,
+                priority = newItemPriority ?: Item().priority, // Default priority
                 imageUrl = newItemName.lowercase(),
                 frequency = if (!newItemFrequency.isNullOrBlank() && !newItemFrequencyUnit.isNullOrBlank())
                     "$newItemFrequency per $newItemFrequencyUnit"
-                else ShoppingItem().frequency,
+                else Item().frequency,
             )
             // Set explicit amount left percentage if provided
             if (newItemAmountLeftPercentage != null) {
