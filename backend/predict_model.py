@@ -95,7 +95,6 @@ def predict_interval():
         # Get input data from the request
         data = request.json
         last_purchase_date = pd.to_datetime(data.get('last_purchase_date'))
-        days_since_last_purchase = (pd.Timestamp.now() - last_purchase_date).days
 
         # Validate input
         category_id = data.get('category_id', None)
@@ -140,7 +139,6 @@ def predict_interval():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-
 
 if __name__ == "__main__":
     app.run(debug=True)

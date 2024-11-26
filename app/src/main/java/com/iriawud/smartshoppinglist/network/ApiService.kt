@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 // Data classes remain unchanged
@@ -89,6 +90,14 @@ interface ApiService {
     // DELETE a shopping item by ID
     @DELETE("/shopping_items/{id}")
     suspend fun deleteShoppingItem(@Path("id") itemId: Int): Response<Void>
+
+    // Update an existing shopping item by ID
+    @PUT("/shopping_items/{id}")
+    suspend fun updateShoppingItem(
+        @Path("id") itemId: Int,
+        @Body updatedItem: ShoppingListItem
+    ): Response<Void>
+
 
     // GET all predefined items
     @GET("/predefined_items")

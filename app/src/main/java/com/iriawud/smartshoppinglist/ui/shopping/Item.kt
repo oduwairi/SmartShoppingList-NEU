@@ -66,8 +66,7 @@ data class Item(
 
     fun getTimeLeft(): String {
         return try {
-            val frequencyInDays = getFrequencyInDays()
-            val daysLeft = ((amountLeftPercent / 100.0) * frequencyInDays).toInt()
+            val daysLeft = (getFrequencyInDays() - getDaysPassed()).toInt()
 
             // Convert daysLeft to appropriate time unit
             when {

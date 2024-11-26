@@ -40,7 +40,7 @@ class ShoppingFragment : Fragment() {
         shoppingViewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
         inventoryViewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
 
-        adapter = ShoppingAdapter(mutableListOf())
+        adapter = ShoppingAdapter(mutableListOf(), shoppingViewModel)
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 

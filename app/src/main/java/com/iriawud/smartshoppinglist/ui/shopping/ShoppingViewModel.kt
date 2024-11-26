@@ -32,6 +32,8 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
+    private val _expandedStates = mutableMapOf<Int, Boolean>()
+
     fun initializeData() {
         viewModelScope.launch {
             _items.value = mutableListOf() // Initialize with an empty list
@@ -178,6 +180,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
         }
     }
 
+
     override fun addItem(item: Item) {
         viewModelScope.launch {
             try {
@@ -288,6 +291,67 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
         }
     }
 
+    override fun updateItem(item: Item) {
+        viewModelScope.launch {
+            try {
+                // Indicate loading state
+                _isLoading.postValue(true)
+
+                // Map the `Item` to `ShoppingListItem` for the API call
+                val categoryMap = _categories.value ?: emptyMap()
+                val categoryId = categoryMap.keys.firstOrNull { categoryMap[it] == item.category } ?: 1
+
+                val quantityParts = item.quantity.split(" ")
+                val quantityValue = quantityParts.getOrNull(0)?.toDoubleOrNull() ?: 0.0
+                val quantityUnit = quantityParts.getOrNull(1)?.trim() ?: "pcs"
+
+                val priceParts = item.price.split(" ")
+                val priceValue = priceParts.getOrNull(0)?.toDoubleOrNull()
+                val currency = priceParts.getOrNull(1)?.trim() ?: "USD"
+
+                val frequencyParts = item.frequency.split(" ")
+                val frequencyValue = frequencyParts.getOrNull(0)?.toIntOrNull()
+                val frequencyUnit = frequencyParts.getOrNull(2)?.trim()
+
+                val shoppingListItem = ShoppingListItem(
+                    item_id = item.id,
+                    list_id = 1, // Assuming list_id is always 1 for now
+                    item_name = item.name,
+                    quantity = quantityValue,
+                    quantity_unit = quantityUnit,
+                    price = priceValue,
+                    currency = currency,
+                    image_url = item.imageUrl,
+                    priority = item.priority,
+                    frequency_value = frequencyValue,
+                    frequency_unit = frequencyUnit,
+                    category_id = categoryId,
+                    added_at = item.createdAt
+                )
+
+                // Make the API call to update the item
+                val response = RetrofitInstance.api.updateShoppingItem(item.id!!, shoppingListItem)
+
+                if (response.isSuccessful) {
+                    // Update the item locally
+                    updateItemLocally(item)
+                } else {
+                    // Handle unsuccessful response
+                    _error.postValue("Failed to update item: ${response.message()}")
+                    Log.e("ShoppingViewModel", "Error updating item: HTTP ${response.code()}, ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                // Handle exceptions
+                _error.postValue("Error: ${e.message}")
+                Log.e("ShoppingViewModel", "API call failed: ${e.message}", e)
+            } finally {
+                // Reset loading state
+                _isLoading.postValue(false)
+            }
+        }
+    }
+
+
     private fun addItemLocally(item: Item) {
         _items.value?.let {
             it.add(item)
@@ -300,6 +364,12 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
             it.remove(item)
             _items.value = it // Trigger LiveData update
         }
+    }
+
+    fun updateItemLocally(updatedItem: Item) {
+        _items.value = _items.value?.map {
+            if (it.id == updatedItem.id) updatedItem else it
+        }?.toMutableList() // Convert the result back to MutableList
     }
 
     fun deleteAllItems() {

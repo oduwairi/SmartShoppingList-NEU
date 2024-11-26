@@ -4,4 +4,5 @@ import com.iriawud.smartshoppinglist.ui.shopping.Item
 
 interface ItemViewModel {
     fun addItem(item: Item)
+    fun updateItem(item: Item)
 }

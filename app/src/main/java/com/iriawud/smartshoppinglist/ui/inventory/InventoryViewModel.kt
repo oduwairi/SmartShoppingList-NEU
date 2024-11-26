@@ -267,6 +267,10 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
         }
     }
 
+    override fun updateItem(item: Item) {
+        // Stub implementation, skipping for now
+    }
+
     // Add item locally for immediate UI update
     private fun addItemLocally(item: Item) {
         _items.value?.let {

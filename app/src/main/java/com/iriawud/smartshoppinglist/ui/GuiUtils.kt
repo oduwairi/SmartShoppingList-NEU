@@ -1,8 +1,12 @@
 package com.iriawud.smartshoppinglist.ui
 
 import android.R
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -143,23 +147,62 @@ object GuiUtils {
         quantityUnitSpinner: Spinner,
         prioritySpinner: Spinner,
         prioritySlider: Slider,
-        frequencyUnitSpinner: Spinner? = null // Make this parameter nullable
+        frequencyUnitSpinner: Spinner? = null
     ) {
-        // List of units
+        setupQuantityDropdown(context, quantityUnitSpinner)
+        setupPriorityDropdown(context, prioritySpinner, prioritySlider)
+
+        // Only set up the frequency dropdown if the spinner is provided
+        frequencyUnitSpinner?.let {
+            setupFrequencyDropdown(context, it)
+        }
+    }
+
+    fun setupQuantityDropdown(
+        context: Context,
+        quantityUnitSpinner: Spinner,
+        defaultUnit: String? = null
+    ) {
         val units = listOf("kg", "lbs", "oz", "pcs", "lt", "gal", "pack", "dozen")
         val adapterUnits = ArrayAdapter(context, R.layout.simple_spinner_item, units)
         adapterUnits.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         quantityUnitSpinner.adapter = adapterUnits
 
-        // Define priority values
+        // Set default selection if provided
+        defaultUnit?.let {
+            val defaultIndex = units.indexOf(it)
+            if (defaultIndex >= 0) {
+                quantityUnitSpinner.setSelection(defaultIndex)
+            }
+        }
+    }
+
+
+    fun setupPriorityDropdown(
+        context: Context,
+        prioritySpinner: Spinner,
+        prioritySlider: Slider,
+        defaultPriorityValue: Int? = null // Default slider value (1-10)
+    ) {
         val priorityValues = mapOf("Low" to 3, "Medium" to 5, "High" to 8)
-        // List of priority labels
         val priorities = listOf("Low", "Medium", "High")
-        // Adapter for the Priority Spinner
-        val adapterPriorities =
-            ArrayAdapter(context, R.layout.simple_spinner_item, priorities)
+        val adapterPriorities = ArrayAdapter(context, R.layout.simple_spinner_item, priorities)
         adapterPriorities.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         prioritySpinner.adapter = adapterPriorities
+
+        // Set default selection and slider value based on the numeric priority
+        defaultPriorityValue?.let { value ->
+            // Find the closest priority label
+            val closestPriority =
+                priorityValues.entries.minByOrNull { Math.abs(it.value - value) }?.key
+            val spinnerPosition = priorities.indexOf(closestPriority)
+
+            // Set spinner selection and slider value
+            if (spinnerPosition >= 0) {
+                prioritySpinner.setSelection(spinnerPosition)
+                prioritySlider.value = value.toFloat()
+            }
+        }
 
         // Set listener on Priority Spinner to update the Slider
         prioritySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -186,16 +229,17 @@ object GuiUtils {
                 prioritySpinner.setSelection(spinnerPosition)
             }
         }
+    }
 
-        // Only set up the frequency spinner if it's provided
-        frequencyUnitSpinner?.let {
-            // List of frequency units
-            val frequencies = listOf("Day", "Week", "Month")
-            val adapterFrequencies =
-                ArrayAdapter(context, R.layout.simple_spinner_item, frequencies)
-            adapterFrequencies.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-            it.adapter = adapterFrequencies
-        }
+
+    fun setupFrequencyDropdown(
+        context: Context,
+        frequencyUnitSpinner: Spinner
+    ) {
+        val frequencies = listOf("Day", "Week", "Month")
+        val adapterFrequencies = ArrayAdapter(context, R.layout.simple_spinner_item, frequencies)
+        adapterFrequencies.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        frequencyUnitSpinner.adapter = adapterFrequencies
     }
 
     fun setupAutoCompleteTextView(
@@ -261,6 +305,137 @@ object GuiUtils {
         }
     }
 
+    fun updateQuantity(
+        quantityEditText: EditText,
+        quantityUnitDropdown: Spinner,
+        item: Item,
+        viewModel: ItemViewModel,
+        saveButton: CardView,
+        discardButton: CardView,
+        toggleExpansion: () -> Unit
+    ) {
+        // Set initial values
+        val originalQuantity = item.quantity.split(" ")[0].trim()
+        val originalUnit = item.quantity.split(" ")[1].trim()
+
+        quantityEditText.setText(originalQuantity)
+        setupQuantityDropdown(
+            quantityEditText.context,
+            quantityUnitDropdown,
+            defaultUnit = originalUnit
+        )
+
+        // Local variables to store the updated values
+        var newQuantity = originalQuantity
+        var newUnit = originalUnit
+
+        // Update local values when the quantity text changes
+        quantityEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                newQuantity = s.toString().trim() // Update the local quantity value
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        // Update local values when the unit changes
+        quantityUnitDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                newUnit = parent.getItemAtPosition(position).toString() // Update the local unit value
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        // Save changes when the "Save Changes" button is clicked
+        saveButton.setOnClickListener {
+            val updatedItem = item.copy(quantity = "$newQuantity $newUnit")
+            viewModel.updateItem(updatedItem) // Call the ViewModel to persist the changes
+            toggleExpansion() // Collapse the card
+        }
+
+        // Discard changes when the "Discard Changes" button is clicked
+        discardButton.setOnClickListener {
+            // Reset UI elements to their original state
+            quantityEditText.setText(originalQuantity)
+            val originalUnitPosition = (quantityUnitDropdown.adapter as ArrayAdapter<String>)
+                .getPosition(originalUnit)
+            quantityUnitDropdown.setSelection(originalUnitPosition)
+
+            // Reset local variables to original values
+            newQuantity = originalQuantity
+            newUnit = originalUnit
+
+            toggleExpansion() // Collapse the card
+        }
+    }
+
+
+    fun updateCost(
+        costEditText: EditText,
+        costUnitEditText: EditText,
+        item: Item
+    ) {
+        // Set initial values
+        costEditText.setText(item.price.split(" ")[0].trim())
+        costUnitEditText.setText(item.price.split(" ")[1].trim())
+
+        // Update `item.price` when cost text changes
+        costEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val costValue = s.toString().trim()
+                val unit = costUnitEditText.text.toString().trim()
+                item.price = "$costValue $unit"
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        // Update `item.price` when unit text changes
+        costUnitEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val costValue = costEditText.text.toString().trim()
+                val unit = s.toString().trim()
+                item.price = "$costValue $unit"
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    fun updatePriority(
+        priorityDropdown: Spinner,
+        prioritySlider: Slider,
+        item: Item
+    ) {
+        // Set initial values
+        GuiUtils.setupPriorityDropdown(priorityDropdown.context, priorityDropdown, prioritySlider, defaultPriorityValue = item.priority)
+
+        // Update `item.priority` when slider value changes
+        prioritySlider.addOnChangeListener { slider, value, fromUser ->
+            item.priority = value.toInt()
+        }
+
+        // Synchronize slider and dropdown
+        priorityDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val priorities = listOf("Low", "Medium", "High")
+                val priorityValues = mapOf("Low" to 3, "Medium" to 5, "High" to 8)
+
+                val selectedPriority = priorities[position]
+                val sliderValue = priorityValues[selectedPriority] ?: 5
+                prioritySlider.value = sliderValue.toFloat()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
+
+
     /**
      * Get the drawable resource ID for a given category name.
      * The function converts the category name into a drawable resource name.
@@ -283,5 +458,62 @@ object GuiUtils {
             // Use the fallback image if no matching drawable is found
             imageView.setImageResource(fallbackResId)
         }
+    }
+
+    fun expandView(view: View) {
+        // Temporarily set the view to INVISIBLE for accurate measurement
+        view.visibility = View.INVISIBLE
+
+        // Measure the target height
+        view.measure(
+            View.MeasureSpec.makeMeasureSpec((view.parent as View).width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.UNSPECIFIED
+        )
+        val targetHeight = view.measuredHeight
+
+        // Reset the height to 0 and set the visibility to VISIBLE
+        view.layoutParams.height = 0
+        view.visibility = View.VISIBLE
+        view.requestLayout()
+
+        // Animate the height from 0 to the target height
+        val animator = ValueAnimator.ofInt(0, targetHeight)
+        animator.addUpdateListener { animation ->
+            view.layoutParams.height = animation.animatedValue as Int
+            view.requestLayout()
+        }
+
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                // Set the height to WRAP_CONTENT after the animation ends
+                view.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                view.requestLayout()
+            }
+        })
+
+        animator.duration = 300 // Animation duration in milliseconds
+        animator.start()
+    }
+
+
+
+
+    fun collapseView(view: View) {
+        val initialHeight = view.measuredHeight
+
+        val animator = ValueAnimator.ofInt(initialHeight, 0)
+        animator.addUpdateListener { animation ->
+            view.layoutParams.height = animation.animatedValue as Int
+            view.requestLayout()
+        }
+
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                view.visibility = View.GONE
+            }
+        })
+
+        animator.duration = 300 // Animation duration in ms
+        animator.start()
     }
 }
