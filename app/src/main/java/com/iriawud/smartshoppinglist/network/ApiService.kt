@@ -98,6 +98,11 @@ interface ApiService {
         @Body updatedItem: ShoppingListItem
     ): Response<Void>
 
+    @PUT("/inventory_items/{id}")
+    suspend fun updateInventoryItem(
+        @Path("id") itemId: Int,
+        @Body updatedItem: InventoryItem
+    ): Response<Void>
 
     // GET all predefined items
     @GET("/predefined_items")

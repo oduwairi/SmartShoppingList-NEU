@@ -13,7 +13,7 @@ import com.iriawud.smartshoppinglist.R
 
 class ShoppingCardSwiper(
     private val context: Context,
-    private val adapter: ShoppingAdapter,
+    private val adapter: ShoppingItemAdapter,
     private val onItemDeleted: (Item) -> Unit,
     private val onItemDone: (Item) -> Unit
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {

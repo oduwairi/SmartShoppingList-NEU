@@ -1,9 +1,11 @@
 package com.iriawud.smartshoppinglist.ui.inventory
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iriawud.smartshoppinglist.network.InventoryItem
 import com.iriawud.smartshoppinglist.network.PredefinedItem
@@ -16,7 +18,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class InventoryViewModel : ViewModel(), ItemViewModel {
+
+class InventoryViewModel(application: Application) : AndroidViewModel(application), ItemViewModel {
 
     private val _items = MutableLiveData<MutableList<Item>>()
     val items: LiveData<MutableList<Item>> get() = _items
@@ -37,6 +40,9 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
     val error: LiveData<String?> get() = _error
 
     private val processedItems = mutableSetOf<String>() // Track processed items by name or ID
+
+    private val context: Context = getApplication<Application>().applicationContext
+
 
     init {
         initializeData()
@@ -94,11 +100,12 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
 
                     // Process due items
                     fetchedItems.forEach { inventoryItem ->
-                        if (inventoryItem.amountLeftPercent == 0 && !processedItems.contains(inventoryItem.name)) {
-                            processedItems.add(inventoryItem.name) // Mark item as processed
+                        if (inventoryItem.amountLeftPercent == 0 && !isItemProcessed(inventoryItem.id?:-1)) {
+                            addProcessedItem(inventoryItem.id?:-1) // Mark item as processed in SharedPreferences
                             _dueItems.value = inventoryItem
                         }
                     }
+
                 }
             } else {
                 // Handle unsuccessful response
@@ -221,7 +228,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
 
                 // Create the InventoryItem object
                 val inventoryItem = InventoryItem(
-                    inventory_id = 1, // Adjust inventory_id logic as needed
+                    inventory_id = 1,
                     item_id = item.id,
                     item_name = item.name,
                     quantity_stocked = quantityStocked,
@@ -239,6 +246,10 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                 val response = RetrofitInstance.api.addInventoryItem(inventoryItem)
 
                 if (response.isSuccessful) {
+                    //remove item from processed items
+                    removeProcessedItem(item.id?:-1)
+
+
                     // Check if the item already exists locally
                     val existingItemIndex = _items.value?.indexOfFirst { it.name.lowercase().trim() == item.name.lowercase().trim() }
 
@@ -246,7 +257,7 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
                         // Update the existing item
                         val updatedList = _items.value?.toMutableList()
                         updatedList?.set(existingItemIndex, item)
-                        _items.postValue(updatedList)
+                        _items.postValue(updatedList!!)
                     } else {
                         // Add the item locally if it's new
                         addItemLocally(item)
@@ -268,7 +279,71 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
     }
 
     override fun updateItem(item: Item) {
-        // Stub implementation, skipping for now
+        viewModelScope.launch {
+            try {
+                // Indicate loading state
+                _isLoading.postValue(true)
+
+                // Map the `Item` to `InventoryItem` for the API call
+                // Map category name to ID
+                val categoryMap = _categories.value ?: emptyMap()
+                val categoryId = categoryMap.keys.firstOrNull { categoryMap[it] == item.category }
+                if (categoryId == null) {
+                    Log.w("InventoryViewModel", "Category '${item.category}' not found in categories map.")
+                }
+
+                // Parse item fields
+                val quantityParts = item.quantity.split(" ")
+                val quantityStocked = quantityParts.getOrNull(0)?.toDoubleOrNull() ?: 0.0
+                val quantityUnit = quantityParts.getOrNull(1)?.trim() ?: "pcs"
+
+                val priceParts = item.price.split(" ")
+                val priceValue = priceParts.getOrNull(0)?.toDoubleOrNull()
+                val currency = priceParts.getOrNull(1)?.trim() ?: "USD"
+
+                val restockDate = MathUtils.calculateRestockDate(item.createdAt, item.frequency)
+
+                val inventoryItem = InventoryItem(
+                    item_id = item.id,
+                    inventory_id = 1, // Assuming inventory_id is always 1 for now
+                    item_name = item.name,
+                    quantity_stocked = quantityStocked,
+                    quantity_unit = quantityUnit,
+                    price = priceValue,
+                    currency = currency,
+                    image_url = item.imageUrl,
+                    priority = item.priority,
+                    category_id = categoryId ?: 21,
+                    stocked_at = item.createdAt, // Assuming stocked_at is same as createdAt for now
+                    restock_date = restockDate // You can add logic to set restock_date if needed
+                )
+
+                // Make the API call to update the inventory item
+                val response = RetrofitInstance.api.updateInventoryItem(item.id!!, inventoryItem)
+
+                if (response.isSuccessful) {
+                    // Update the item locally
+                    updateItemLocally(item)
+                } else {
+                    // Handle unsuccessful response
+                    _error.postValue("Failed to update inventory item: ${response.message()}")
+                    Log.e("InventoryViewModel", "Error updating item: HTTP ${response.code()}, ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                // Handle exceptions
+                _error.postValue("Error: ${e.message}")
+                Log.e("InventoryViewModel", "API call failed: ${e.message}", e)
+            } finally {
+                // Reset loading state
+                _isLoading.postValue(false)
+            }
+        }
+    }
+
+    fun updateItemLocally(updatedItem: Item) {
+        _items.value = _items.value?.map {
+            if (it.id == updatedItem.id) updatedItem else it
+        }?.toMutableList() // Convert the result back to MutableList
     }
 
     // Add item locally for immediate UI update
@@ -278,4 +353,27 @@ class InventoryViewModel : ViewModel(), ItemViewModel {
             _items.value = it // Trigger LiveData update
         }
     }
+
+    private fun addProcessedItem(itemId: Int) {
+        val sharedPref = context.getSharedPreferences("ProcessedItems", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean(itemId.toString(), true)
+            apply()
+        }
+    }
+
+    private fun isItemProcessed(itemId: Int): Boolean {
+        val sharedPref = context.getSharedPreferences("ProcessedItems", Context.MODE_PRIVATE)
+        return sharedPref.getBoolean(itemId.toString(), false)
+    }
+
+    private fun removeProcessedItem(itemId: Int) {
+        val sharedPref = context.getSharedPreferences("ProcessedItems", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            remove(itemId.toString())
+            apply()
+        }
+    }
+
+
 }

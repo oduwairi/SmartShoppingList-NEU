@@ -6,9 +6,13 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -17,6 +21,7 @@ import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
 import com.iriawud.smartshoppinglist.network.PredefinedItem
@@ -60,7 +65,7 @@ object GuiUtils {
             )
             // Set explicit amount left percentage if provided
             if (newItemAmountLeftPercentage != null) {
-                newItem.setExplicitAmountLeftPercent(newItemAmountLeftPercentage)
+                newItem.setExplicitStartingPercent(newItemAmountLeftPercentage)
             }
 
             viewModel.addItem(newItem)
@@ -155,6 +160,47 @@ object GuiUtils {
         // Only set up the frequency dropdown if the spinner is provided
         frequencyUnitSpinner?.let {
             setupFrequencyDropdown(context, it)
+        }
+    }
+
+    fun setupSearchBar(
+        context: Context,
+        searchBarLayout: View,
+        editTextSearchQuery: EditText,
+        searchBarIcon: ImageView,
+        recyclerView: RecyclerView,
+        toggleMenu: () -> Unit = {},
+        onQueryChange: (String) -> Unit,
+        onSearchBarClosed: () -> Unit
+    ) {
+        // Show the search bar and handle button clicks
+        toggleMenu()
+
+        // Show the search bar and focus the input
+        searchBarLayout.visibility = View.VISIBLE
+        editTextSearchQuery.requestFocus()
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(editTextSearchQuery, InputMethodManager.SHOW_IMPLICIT)
+
+        // Set up text change listener for search input
+        editTextSearchQuery.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                onQueryChange(s.toString()) // Call the provided callback for query changes
+            }
+        })
+
+        // Handle search icon click (acts as cancel button)
+        searchBarIcon.setOnClickListener {
+            // Hide the search bar
+            searchBarLayout.visibility = View.GONE
+            // Clear the search query
+            editTextSearchQuery.text.clear()
+            // Hide the keyboard
+            imm.hideSoftInputFromWindow(editTextSearchQuery.windowToken, 0)
+            // Call the provided callback to handle additional cleanup
+            onSearchBarClosed()
         }
     }
 
@@ -496,8 +542,6 @@ object GuiUtils {
     }
 
 
-
-
     fun collapseView(view: View) {
         val initialHeight = view.measuredHeight
 
@@ -516,4 +560,27 @@ object GuiUtils {
         animator.duration = 300 // Animation duration in ms
         animator.start()
     }
+
+    fun getHighlightedText(
+        fullText: String,
+        highlightText: String,
+        color: Int,
+        context: Context
+    ): SpannableString {
+        val spannableString = SpannableString(fullText)
+        val startIndex = fullText.indexOf(highlightText)
+
+        if (startIndex >= 0) {
+            val endIndex = startIndex + highlightText.length
+            spannableString.setSpan(
+                ForegroundColorSpan(ContextCompat.getColor(context, color)),
+                startIndex,
+                endIndex,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        return spannableString
+    }
+
 }

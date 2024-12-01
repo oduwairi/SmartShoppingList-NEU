@@ -32,8 +32,6 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
-    private val _expandedStates = mutableMapOf<Int, Boolean>()
-
     fun initializeData() {
         viewModelScope.launch {
             _items.value = mutableListOf() // Initialize with an empty list
@@ -235,7 +233,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
                         // Update the existing item
                         val updatedList = _items.value?.toMutableList()
                         updatedList?.set(existingItemIndex, item)
-                        _items.postValue(updatedList)
+                        _items.postValue(updatedList!!)
                     } else {
                         // Add the item locally if it's new
                         addItemLocally(item)

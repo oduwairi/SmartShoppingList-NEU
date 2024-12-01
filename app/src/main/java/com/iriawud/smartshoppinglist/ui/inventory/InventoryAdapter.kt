@@ -14,7 +14,6 @@ import com.iriawud.smartshoppinglist.ui.shopping.Item
 class InventoryAdapter(private var items: List<Item>) :
     RecyclerView.Adapter<InventoryAdapter.CategoryViewHolder>() {
 
-    // This variable should be mutable so it updates with each data change
     private var groupedItems: Map<String, List<Item>> = items.groupBy { it.category }
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

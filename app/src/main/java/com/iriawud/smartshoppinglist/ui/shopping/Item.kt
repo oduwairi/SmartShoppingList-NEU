@@ -33,7 +33,7 @@ data class Item(
         }
 
     // Allow explicitly setting the remaining percentage
-    fun setExplicitAmountLeftPercent(value: Int?) {
+    fun setExplicitStartingPercent(value: Int?) {
         explicitStartingPercent = value?.coerceIn(0, 100) // Ensure the value is between 0 and 100
     }
 

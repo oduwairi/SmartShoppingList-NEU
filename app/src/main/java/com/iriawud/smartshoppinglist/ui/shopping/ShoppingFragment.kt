@@ -1,12 +1,21 @@
 package com.iriawud.smartshoppinglist.ui.shopping
 
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
@@ -14,14 +23,13 @@ import com.iriawud.smartshoppinglist.ui.CategorySelectionDialog
 import com.iriawud.smartshoppinglist.ui.GuiUtils
 import com.iriawud.smartshoppinglist.ui.inventory.InventoryViewModel
 
-
 class ShoppingFragment : Fragment() {
-    //setup adapter and view models
+    // Setup adapter and view models
     private lateinit var adapter: ShoppingAdapter
     private lateinit var shoppingViewModel: ShoppingViewModel
     private lateinit var inventoryViewModel: InventoryViewModel
 
-    //setup binding and other variables
+    // Setup binding and other variables
     private var _binding: FragmentShoppingBinding? = null
     private val binding get() = _binding!!
     private var isInputBarExpanded: Boolean = false
@@ -40,7 +48,12 @@ class ShoppingFragment : Fragment() {
         shoppingViewModel = ViewModelProvider(this)[ShoppingViewModel::class.java]
         inventoryViewModel = ViewModelProvider(requireActivity())[InventoryViewModel::class.java]
 
-        adapter = ShoppingAdapter(mutableListOf(), shoppingViewModel)
+        adapter = ShoppingAdapter(
+            items = listOf(),
+            shoppingViewModel = shoppingViewModel,
+            inventoryViewModel = inventoryViewModel,
+            context = requireContext()
+        )
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
 
@@ -51,8 +64,13 @@ class ShoppingFragment : Fragment() {
             GuiUtils.updateEmptyStateView(
                 emptyStateView = binding.root.findViewById(R.id.emptyStateView),
                 recyclerView = binding.shoppingRecyclerView,
-                isEmptyCheck = { items.isEmpty() })
+                isEmptyCheck = { items.isEmpty() }
+            )
+
+            updateBottomBarText(items)
         }
+
+
 
         // Observe predefined items and update the AutoCompleteTextView
         shoppingViewModel.predefinedItems.observe(viewLifecycleOwner) { predefinedItems ->
@@ -76,21 +94,7 @@ class ShoppingFragment : Fragment() {
             shoppingViewModel.addItem(shoppingItem)
         }
 
-
-        // Setup swipe functionality using the ShoppingCardSwiper class
-        val swipeHandler = ShoppingCardSwiper(
-            context = requireContext(),
-            adapter = adapter,
-            onItemDeleted = { item ->
-                shoppingViewModel.deleteItem(item)
-            },
-            onItemDone = { item ->
-                shoppingViewModel.deleteItem(item)
-                inventoryViewModel.addItem(item)
-            }
-        )
-
-        //setup dropdown menus with default values
+        // Setup dropdown menus with default values
         GuiUtils.setupDropdownMenus(
             context = requireContext(),
             quantityUnitSpinner = binding.quantityUnitSpinner,
@@ -99,10 +103,7 @@ class ShoppingFragment : Fragment() {
             frequencyUnitSpinner = binding.frequencyUnitSpinner
         )
 
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(binding.shoppingRecyclerView)
-
-        //set on click listener for "add" button to create a Item class
+        // Set on click listener for "add" button to create an Item class
         binding.buttonAddItem.setOnClickListener {
             GuiUtils.addItem(
                 binding.editTextNewItem.text.toString().trim(),
@@ -130,7 +131,7 @@ class ShoppingFragment : Fragment() {
             )
         }
 
-        //set on click listener for "item details" button to toggle the expandable card
+        // Set on click listener for "item details" button to toggle the expandable card
         binding.buttonItemDetails.setOnClickListener {
             isInputBarExpanded = GuiUtils.toggleExpandableDetailsCard(
                 binding.expandableCardInputs,
@@ -139,7 +140,7 @@ class ShoppingFragment : Fragment() {
             )
         }
 
-        //set on click listener for "menu" button to toggle the expandable menu buttons
+        // Set on click listener for "menu" button to toggle the expandable menu buttons
         binding.buttonMenuExpand.setOnClickListener {
             isBottomMenuExpanded = GuiUtils.toggleExpandableMenuButtons(
                 binding.buttonMenuExpand,
@@ -163,11 +164,83 @@ class ShoppingFragment : Fragment() {
             }
             dialog.show(childFragmentManager, "CategorySelectionDialog")
         }
+
+        binding.buttonSearch.setOnClickListener {
+            // Access the search bar layout
+            val searchBarLayout = binding.root.findViewById<View>(R.id.searchBarLayout)
+            GuiUtils.setupSearchBar(
+                context = requireContext(),
+                searchBarLayout = searchBarLayout,
+                editTextSearchQuery = searchBarLayout.findViewById<EditText>(R.id.searchedText),
+                searchBarIcon = searchBarLayout.findViewById<ImageView>(R.id.searchBarIcon),
+                recyclerView = binding.shoppingRecyclerView,
+                toggleMenu = {
+                    isBottomMenuExpanded = GuiUtils.toggleExpandableMenuButtons(
+                        binding.buttonMenuExpand,
+                        binding.bottomExpandableMenuButtons,
+                        isBottomMenuExpanded
+                    )
+                },
+                onQueryChange = { query ->
+                    filterItems(query) // Delegate query filtering to the fragment
+                },
+                onSearchBarClosed = {
+                    // Reset the RecyclerView adapter or perform additional cleanup
+                    val allItems = shoppingViewModel.items.value ?: listOf()
+                    adapter.updateItems(allItems)
+                }
+            )
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-}
 
+    private fun updateBottomBarText(items: List<Item>) {
+        val redColor = R.color.priority_high // Define your highlight color
+
+        // Calculate item count
+        val itemCount = items.size
+        val itemCountText = "Item count: $itemCount"
+        binding.itemCountText.text = GuiUtils.getHighlightedText(
+            fullText = itemCountText,
+            highlightText = itemCount.toString(),
+            color = redColor,
+            context = requireContext()
+        )
+
+        // Calculate total cost
+        val totalCost = items.sumOf { item ->
+            val priceString = item.price.replace(Regex("[^\\d.]"), "")
+            priceString.toDoubleOrNull() ?: 0.0
+        }
+        val totalCostFormatted = "%.2f".format(totalCost)
+        val totalCostText = "Total: $totalCostFormatted"
+        binding.totalCostText.text = GuiUtils.getHighlightedText(
+            fullText = totalCostText,
+            highlightText = totalCostFormatted,
+            color = redColor,
+            context = requireContext()
+        )
+    }
+
+
+    private fun filterItems(query: String) {
+        // Get the full list of items from the ViewModel
+        val allItems = shoppingViewModel.items.value ?: listOf()
+
+        if (query.isEmpty()) {
+            // If query is empty, show all items
+            adapter.updateItems(allItems)
+        } else {
+            // Filter items based on the query
+            val filteredItems = allItems.filter { item ->
+                item.name.contains(query, ignoreCase = true)
+            }
+            adapter.updateItems(filteredItems)
+        }
+    }
+
+}

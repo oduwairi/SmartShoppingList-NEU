@@ -8,6 +8,65 @@
     tools:context=".ui.shopping.ShoppingFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/bottomCostCardOutline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="-2dp"
+        android:layout_marginTop="-2dp"
+        android:layout_marginEnd="-2dp"
+        android:layout_marginBottom="-2dp"
+        app:cardBackgroundColor="@color/orange_main"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="@id/bottomCostCard"
+        app:layout_constraintEnd_toEndOf="@id/bottomCostCard"
+        app:layout_constraintStart_toStartOf="@id/bottomCostCard"
+        app:layout_constraintTop_toTopOf="@id/bottomCostCard" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottomCostCard"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="42dp"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/totalCostText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/albert_sans_bold"
+                android:text="Total : 185 ₺ "
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/itemCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/albert_sans_bold"
+                android:text="Item count: 0"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/buttonSearch"
         android:layout_width="45dp"
         android:layout_height="45dp"
@@ -275,6 +334,7 @@
         android:id="@+id/shoppingRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="42dp"
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -297,6 +357,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topActionBarShopping">
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/expandableCardInputs"
@@ -347,7 +408,7 @@
                 <TextView
                     android:id="@+id/textView8"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:fontFamily="@font/albert_sans_bold"
                     android:text="Unit "
@@ -854,6 +915,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topActionBarShopping" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/bottomExpandableMenuButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:constraint_referenced_ids="buttonDeleteAll,buttonDoneAll,buttonSearch,buttonSort,buttonMic"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonBar"
         android:layout_width="match_parent"
@@ -966,11 +1035,13 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/bottomExpandableMenuButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+    <include
+        android:id="@+id/searchBarLayout"
+        layout="@layout/search_bar_shopping_list"
+        android:elevation="10dp"
         android:visibility="gone"
-        app:constraint_referenced_ids="buttonDeleteAll,buttonDoneAll,buttonSearch,buttonSort,buttonMic"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

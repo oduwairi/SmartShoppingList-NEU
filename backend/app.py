@@ -297,6 +297,69 @@ def update_shopping_item(item_id):
     except Exception as e:
         traceback.print_exc()  # Print the stack trace in the server log
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/inventory_items/<int:item_id>', methods=['PUT'])
+def update_inventory_item(item_id):
+    try:
+        data = request.json  # Get the JSON data from the request body
+
+        # Extract fields from the request data
+        inventory_id = data.get('inventory_id')
+        item_name = data.get('item_name')
+        quantity_stocked = data.get('quantity_stocked')
+        quantity_unit = data.get('quantity_unit')
+        price = data.get('price')
+        currency = data.get('currency')
+        image_url = data.get('image_url')
+        priority = data.get('priority')
+        category_id = data.get('category_id')
+        stocked_at = data.get('stocked_at')
+        restock_date = data.get('restock_date')
+
+        # Connect to the database
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        # Update query
+        query = """
+            UPDATE InventoryItems
+            SET
+                inventory_id = %s,
+                item_name = %s,
+                quantity_stocked = %s,
+                quantity_unit = %s,
+                price = %s,
+                currency = %s,
+                image_url = %s,
+                priority = %s,
+                category_id = %s,
+                stocked_at = %s,
+                restock_date = %s
+            WHERE item_id = %s
+        """
+
+        # Execute the query with parameters
+        cursor.execute(query, (
+            inventory_id, item_name, quantity_stocked, quantity_unit, price, currency,
+            image_url, priority, category_id, stocked_at, restock_date, item_id
+        ))
+        db.commit()
+
+        # Check if the update was successful
+        if cursor.rowcount > 0:
+            cursor.close()
+            db.close()
+            return jsonify({"message": f"Inventory item {item_id} updated successfully!"}), 200
+        else:
+            cursor.close()
+            db.close()
+            return jsonify({"error": "Item not found"}), 404
+
+    except Exception as e:
+        # Handle any exceptions
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
 
     
 @app.route('/predefined_items', methods=['GET'])
