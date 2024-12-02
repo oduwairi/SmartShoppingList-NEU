@@ -399,16 +399,21 @@ def delete_recommendation_item(item_id):
         query = "DELETE FROM recommendation_items WHERE item_id = %s"
         cursor.execute(query, (item_id,))
         db.commit()
+        
+        # Get rowcount before closing the cursor
+        rowcount = cursor.rowcount
+
         cursor.close()
         db.close()
 
-        if cursor.rowcount > 0:
+        if rowcount > 0:  # Check if any rows were affected
             return jsonify({"message": f"Recommendation item {item_id} deleted successfully!"}), 200
         else:
             return jsonify({"error": "Item not found"}), 404
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/recommendation_items/generate', methods=['POST'])
 def generate_recommendations():

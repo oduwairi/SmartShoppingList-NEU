@@ -106,7 +106,14 @@ class ShoppingAdapter(
             itemTouchHelper.attachToRecyclerView(holder.categoryItemsRecyclerView)
 
         } else if (holder is FooterViewHolder) {
-            val recommendationAdapter = RecommendationAdapter(recommendations) { recommendation ->
+            val maxVisibleItems = 50 // Set the maximum number of visible items
+            val limitedRecommendations = if (recommendations.size > maxVisibleItems) {
+                recommendations.subList(0, maxVisibleItems) // Limit the recommendations
+            } else {
+                recommendations
+            }
+
+            val recommendationAdapter = RecommendationAdapter(limitedRecommendations, maxVisibleItems) { recommendation ->
                 // Handle adding recommendation to shopping list
                 val categoryMap = CategoryRepository.getCategories().associateBy { it.category_id }
                 val newItem = Item(
@@ -126,12 +133,13 @@ class ShoppingAdapter(
             }
 
             holder.recommendationRecyclerView.apply {
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 adapter = recommendationAdapter
             }
             recommendationAdapter.notifyDataSetChanged() // Ensure recommendations update
         }
     }
+
 
     override fun getItemCount(): Int = groupedItems.size + 1 // Include footer
 

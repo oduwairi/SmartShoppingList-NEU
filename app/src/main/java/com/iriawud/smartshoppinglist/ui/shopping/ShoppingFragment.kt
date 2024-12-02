@@ -17,8 +17,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.iriawud.smartshoppinglist.R
 import com.iriawud.smartshoppinglist.databinding.FragmentShoppingBinding
+import com.iriawud.smartshoppinglist.ui.CategoryRepository
 import com.iriawud.smartshoppinglist.ui.CategorySelectionDialog
 import com.iriawud.smartshoppinglist.ui.GuiUtils
 import com.iriawud.smartshoppinglist.ui.inventory.InventoryViewModel
@@ -57,6 +59,47 @@ class ShoppingFragment : Fragment() {
         )
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
+
+        // Configure Recommendation Box
+        val emptyStateSuggestionBox = binding.root.findViewById<View>(R.id.emptyStateSuggestionBoxContainer)
+        val recommendationRecyclerView = emptyStateSuggestionBox.findViewById<RecyclerView>(R.id.recommendationRecyclerView)
+
+        recommendationRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        shoppingViewModel.recommendations.observe(viewLifecycleOwner) { recommendations ->
+            val maxVisibleItems = 50 // Set the maximum number of visible items
+            val recommendationAdapter = RecommendationAdapter(recommendations, maxVisibleItems) { recommendation ->
+                // Handle adding recommendation to shopping list
+                val categoryMap = CategoryRepository.getCategories().associateBy { it.category_id }
+                val newItem = Item(
+                    id = recommendation.item_id,
+                    name = recommendation.item_name,
+                    quantity = "${recommendation.quantity} ${recommendation.quantity_unit ?: "pcs"}",
+                    category = categoryMap[recommendation.category_id]?.category_name ?: "Uncategorized", // Map ID to name
+                    price = "${recommendation.price ?: 0.0} ${recommendation.currency ?: "USD"}",
+                    priority = recommendation.priority,
+                    imageUrl = recommendation.image_url,
+                    frequency = "${recommendation.frequency_value ?: "Not set"} ${recommendation.frequency_unit ?: ""}",
+                    createdAt = Item.getCurrentTimestamp()
+                )
+                shoppingViewModel.addItem(newItem)
+                shoppingViewModel.deleteRecommendationItem(recommendation)
+            }
+            recommendationRecyclerView.adapter = recommendationAdapter
+            recommendationAdapter.notifyDataSetChanged() // Ensure recommendations update
+        }
+
+
+        // Observe Shopping List Items
+        shoppingViewModel.items.observe(viewLifecycleOwner) { items ->
+            adapter.updateItems(items)
+            GuiUtils.updateEmptyStateView(
+                emptyStateView = binding.root.findViewById(R.id.noItemsCard),
+                recyclerView = binding.shoppingRecyclerView
+            ) {
+                items.isEmpty()
+            }
+        }
 
         shoppingViewModel.initializeData()
 
