@@ -52,7 +52,8 @@ class ShoppingFragment : Fragment() {
             items = listOf(),
             shoppingViewModel = shoppingViewModel,
             inventoryViewModel = inventoryViewModel,
-            context = requireContext()
+            context = requireContext(),
+            recommendations = listOf()
         )
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
@@ -66,11 +67,8 @@ class ShoppingFragment : Fragment() {
                 recyclerView = binding.shoppingRecyclerView,
                 isEmptyCheck = { items.isEmpty() }
             )
-
             updateBottomBarText(items)
         }
-
-
 
         // Observe predefined items and update the AutoCompleteTextView
         shoppingViewModel.predefinedItems.observe(viewLifecycleOwner) { predefinedItems ->
@@ -88,6 +86,11 @@ class ShoppingFragment : Fragment() {
                 frequencyEditText = binding.frequencyEditText,
                 frequencyUnitSpinner = binding.frequencyUnitSpinner
             )
+        }
+
+        // Observe recommendation items
+        shoppingViewModel.recommendations.observe(viewLifecycleOwner) { recommendations ->
+            adapter.updateRecommendations(recommendations)
         }
 
         inventoryViewModel.dueItems.observe(viewLifecycleOwner) { shoppingItem ->

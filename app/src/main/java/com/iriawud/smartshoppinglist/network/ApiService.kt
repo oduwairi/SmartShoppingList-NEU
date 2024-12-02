@@ -61,6 +61,23 @@ data class PredefinedItem(
     val default_consumption_unit: String
 )
 
+data class RecommendationItem(
+    val item_id: Int? = null,
+    val user_id: Int,
+    val item_name: String,
+    val quantity: Double,
+    val quantity_unit: String?,
+    val price: Double?,
+    val currency: String?,
+    val image_url: String,
+    val priority: Int,
+    val frequency_value: Int?,
+    val frequency_unit: String?,
+    val category_id: Int,
+    val recommendation_msg: String
+)
+
+
 interface ApiService {
 
     // GET all inventory items (coroutines)
@@ -107,4 +124,19 @@ interface ApiService {
     // GET all predefined items
     @GET("/predefined_items")
     suspend fun getPredefinedItems(): Response<List<PredefinedItem>>
+
+    @GET("/recommendation_items/{user_id}")
+    suspend fun getRecommendationItems(@Path("user_id") userId: Int): Response<List<RecommendationItem>>
+
+    // Generate recommendations for a user (GET /recommendation_items/generate)
+    @POST("/recommendation_items/generate")
+    suspend fun generateRecommendationItems(@Body userId: Map<String, Int>): Response<List<RecommendationItem>>
+
+    // Add recommendations to the database (POST /recommendation_items)
+    @POST("/recommendation_items")
+    suspend fun addRecommendationItems(@Body recommendations: List<RecommendationItem>): Response<Void>
+
+    // DELETE a recommendation item by ID
+    @DELETE("/recommendation_items/{id}")
+    suspend fun deleteRecommendationItem(@Path("id") itemId: Int): Response<Void>
 }

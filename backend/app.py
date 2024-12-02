@@ -375,6 +375,131 @@ def get_predefined_items():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/recommendation_items/<int:user_id>', methods=['GET'])
+def get_recommendation_items(user_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        query = "SELECT * FROM recommendation_items WHERE user_id = %s"
+        cursor.execute(query, (user_id,))
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify(result), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/recommendation_items/<int:item_id>', methods=['DELETE'])
+def delete_recommendation_item(item_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        query = "DELETE FROM recommendation_items WHERE item_id = %s"
+        cursor.execute(query, (item_id,))
+        db.commit()
+        cursor.close()
+        db.close()
+
+        if cursor.rowcount > 0:
+            return jsonify({"message": f"Recommendation item {item_id} deleted successfully!"}), 200
+        else:
+            return jsonify({"error": "Item not found"}), 404
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/recommendation_items/generate', methods=['POST'])
+def generate_recommendations():
+    """
+    Generate recommendations for a user without storing them in the database.
+    """
+    try:
+        data = request.json
+        user_id = data.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+
+        # Connect to the database
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        # Fetch user's purchase history or other relevant data
+        query = "SELECT * FROM shopping_items WHERE user_id = %s"
+        cursor.execute(query, (user_id,))
+        purchase_history = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+
+        # Generate recommendations (example logic)
+        recommendations = []
+        for item in purchase_history:
+            # Example: Recommend items from the same category
+            recommended_item = {
+                "item_name": f"Recommended {item['item_name']}",
+                "quantity": 1,
+                "quantity_unit": item["quantity_unit"],
+                "price": item["price"] * 0.9,  # Example: 10% discount on similar items
+                "currency": item["currency"],
+                "image_url": item["image_url"],
+                "priority": 5,
+                "category_id": item["category_id"],
+                "recommendation_msg": "Based on your recent purchases"
+            }
+            recommendations.append(recommended_item)
+
+        # Return generated recommendations
+        return jsonify(recommendations), 200
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/recommendation_items', methods=['POST'])
+def add_recommendation_items():
+    """
+    Add generated recommendations to the database.
+    """
+    try:
+        data = request.json
+        recommendations = data.get('recommendations')
+
+        if not recommendations:
+            return jsonify({"error": "Recommendations are required"}), 400
+
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        # Insert recommendations into the database
+        for rec in recommendations:
+            query = """
+                INSERT INTO recommendation_items (
+                    user_id, item_name, quantity, quantity_unit, price, currency, image_url,
+                    priority, frequency_value, frequency_unit, category_id, recommendation_msg
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query, (
+                rec.get("user_id"), rec.get("item_name"), rec.get("quantity"),
+                rec.get("quantity_unit"), rec.get("price"), rec.get("currency"),
+                rec.get("image_url"), rec.get("priority"), rec.get("frequency_value"),
+                rec.get("frequency_unit"), rec.get("category_id"), rec.get("recommendation_msg")
+            ))
+
+        db.commit()
+        cursor.close()
+        db.close()
+
+        return jsonify({"message": "Recommendations added successfully!"}), 201
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+
 
     
 @app.route('/train_model', methods=['POST'])

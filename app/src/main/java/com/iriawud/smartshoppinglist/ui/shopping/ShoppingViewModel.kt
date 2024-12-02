@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iriawud.smartshoppinglist.network.PredefinedItem
+import com.iriawud.smartshoppinglist.network.RecommendationItem
 import com.iriawud.smartshoppinglist.network.RetrofitInstance
 import com.iriawud.smartshoppinglist.network.ShoppingListItem
 import com.iriawud.smartshoppinglist.ui.CategoryRepository
@@ -26,6 +27,10 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     private val _predefinedItems = MutableLiveData<List<PredefinedItem>>()
     val predefinedItems: LiveData<List<PredefinedItem>> get() = _predefinedItems
 
+    private val _recommendations = MutableLiveData<List<RecommendationItem>>()
+    val recommendations: LiveData<List<RecommendationItem>> get() = _recommendations
+
+
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
@@ -38,6 +43,7 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
             fetchCategories() // Wait for categories to be fetched
             fetchShoppingItems() // Wait for shopping items to be fetched
             fetchPredefinedItems() // Wait for predefined items to be fetched
+            fetchRecommendations() // Fetch recommendations
         }
     }
 
@@ -178,6 +184,33 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
         }
     }
 
+    private suspend fun fetchRecommendations() {
+        try {
+            _isLoading.postValue(true)
+
+            val userId = 1 // Replace with the actual user ID
+            val response = RetrofitInstance.api.getRecommendationItems(userId)
+
+            if (response.isSuccessful) {
+                val fetchedRecommendations = response.body() ?: emptyList()
+
+                // Update LiveData with fetched recommendations
+                withContext(Dispatchers.Main) {
+                    _recommendations.value = fetchedRecommendations
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    _error.value = "Failed to fetch recommendations: ${response.message()}"
+                }
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                _error.value = "Error fetching recommendations: ${e.message}"
+            }
+        } finally {
+            _isLoading.postValue(false)
+        }
+    }
 
     override fun addItem(item: Item) {
         viewModelScope.launch {
@@ -253,6 +286,24 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
             }
         }
     }
+
+    fun deleteRecommendationItem(recommendation: RecommendationItem) {
+        viewModelScope.launch {
+            try {
+                // Delete the recommendation item from the backend
+                val response = RetrofitInstance.api.deleteRecommendationItem(recommendation.item_id!!)
+                if (response.isSuccessful) {
+                    // Remove the recommendation item from the local list
+                    _recommendations.value = _recommendations.value?.filter { it.item_id != recommendation.item_id }
+                } else {
+                    Log.e("ShoppingViewModel", "Failed to delete recommendation item: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("ShoppingViewModel", "Error deleting recommendation item: ${e.message}", e)
+            }
+        }
+    }
+
 
     fun deleteItem(item: Item) {
         viewModelScope.launch {
