@@ -6,5 +6,7 @@
         <item>@font/albert_sans</item>
         <item>@font/albert_sans_bold</item>
         <item>@font/albert_sans_italic</item>
+        <item>@font/albert_sans_medium_italic</item>
+        <item>@font/albert_sans_thin</item>
     </array>
 </resources>

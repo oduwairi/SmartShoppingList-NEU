@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,7 @@ class ShoppingAdapter(
     private val shoppingViewModel: ShoppingViewModel,
     private val inventoryViewModel: InventoryViewModel,
     private val context: Context,
-    private var recommendations: List<RecommendationItem> // Added recommendation data
+    private var recommendations: List<RecommendationItem>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var groupedItems: MutableMap<String, MutableList<Item>> = items.groupBy { it.category }
@@ -32,6 +33,9 @@ class ShoppingAdapter(
         private const val VIEW_TYPE_FOOTER = 1
     }
 
+    // Variable to track expand/collapse state
+    private var isRecommendationsExpanded = true
+
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val categoryNameTextView: TextView = itemView.findViewById(R.id.categorySplitterText)
         val categoryItemsRecyclerView: RecyclerView = itemView.findViewById(R.id.shoppingListRecyclerView)
@@ -40,6 +44,7 @@ class ShoppingAdapter(
 
     inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val recommendationRecyclerView: RecyclerView = itemView.findViewById(R.id.recommendationRecyclerView)
+        val expandButton: CardView = itemView.findViewById(R.id.minimizeRecommendationCard)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -106,40 +111,33 @@ class ShoppingAdapter(
             itemTouchHelper.attachToRecyclerView(holder.categoryItemsRecyclerView)
 
         } else if (holder is FooterViewHolder) {
-            val maxVisibleItems = 50 // Set the maximum number of visible items
-            val limitedRecommendations = if (recommendations.size > maxVisibleItems) {
-                recommendations.subList(0, maxVisibleItems) // Limit the recommendations
-            } else {
-                recommendations
-            }
-
-            val recommendationAdapter = RecommendationAdapter(limitedRecommendations, maxVisibleItems) { recommendation ->
-                // Handle adding recommendation to shopping list
-                val categoryMap = CategoryRepository.getCategories().associateBy { it.category_id }
-                val newItem = Item(
-                    id = recommendation.item_id,
-                    name = recommendation.item_name,
-                    quantity = "${recommendation.quantity} ${recommendation.quantity_unit ?: "pcs"}",
-                    category = categoryMap[recommendation.category_id]?.category_name ?: "Uncategorized", // Map ID to name
-                    price = "${recommendation.price ?: 0.0} ${recommendation.currency ?: "USD"}",
-                    priority = recommendation.priority,
-                    imageUrl = recommendation.image_url,
-                    frequency = "${recommendation.frequency_value ?: "Not set"} ${recommendation.frequency_unit ?: ""}",
-                    createdAt = getCurrentTimestamp()
-                )
-                shoppingViewModel.addItem(newItem)
-                // Remove the recommendation via the ViewModel
-                shoppingViewModel.deleteRecommendationItem(recommendation)
-            }
-
-            holder.recommendationRecyclerView.apply {
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-                adapter = recommendationAdapter
-            }
-            recommendationAdapter.notifyDataSetChanged() // Ensure recommendations update
+            GuiUtils.setupRecommendationRecyclerView(
+                context = holder.itemView.context,
+                recyclerView = holder.recommendationRecyclerView,
+                recommendations = recommendations,
+                isRecommendationsExpanded = isRecommendationsExpanded,
+                onAddButtonClick = { recommendation ->
+                    val categoryMap = CategoryRepository.getCategories().associateBy { it.category_id }
+                    val newItem = Item(
+                        id = recommendation.item_id,
+                        name = recommendation.item_name,
+                        quantity = "${recommendation.quantity} ${recommendation.quantity_unit ?: "pcs"}",
+                        category = categoryMap[recommendation.category_id]?.category_name ?: "Uncategorized",
+                        price = "${recommendation.price ?: 0.0} ${recommendation.currency ?: "USD"}",
+                        priority = recommendation.priority,
+                        imageUrl = recommendation.image_url,
+                        frequency = "${recommendation.frequency_value ?: "Not set"} ${recommendation.frequency_unit ?: ""}",
+                        createdAt = getCurrentTimestamp()
+                    )
+                    shoppingViewModel.addItem(newItem)
+                    shoppingViewModel.deleteRecommendationItem(recommendation)
+                },
+                expandButton = holder.expandButton,
+                onToggleExpand = { isExpanded ->
+                    isRecommendationsExpanded = isExpanded
+                })
         }
     }
-
 
     override fun getItemCount(): Int = groupedItems.size + 1 // Include footer
 
@@ -153,7 +151,6 @@ class ShoppingAdapter(
         recommendations = newRecommendations
         notifyItemChanged(groupedItems.size) // Notify footer (recommendations) update
     }
-
 
     private fun removeCategoryAtPosition(position: Int) {
         val category = groupedItems.keys.elementAt(position)

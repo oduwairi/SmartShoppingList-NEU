@@ -22,11 +22,14 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
 import com.iriawud.smartshoppinglist.network.PredefinedItem
+import com.iriawud.smartshoppinglist.network.RecommendationItem
 import com.iriawud.smartshoppinglist.ui.inventory.MathUtils
 import com.iriawud.smartshoppinglist.ui.shopping.Item
+import com.iriawud.smartshoppinglist.ui.shopping.RecommendationAdapter
 
 object GuiUtils {
     fun addItem(
@@ -203,6 +206,42 @@ object GuiUtils {
             onSearchBarClosed()
         }
     }
+
+    fun setupRecommendationRecyclerView(
+        context: Context,
+        recyclerView: RecyclerView,
+        recommendations: List<RecommendationItem>,
+        isRecommendationsExpanded: Boolean,
+        onAddButtonClick: (RecommendationItem) -> Unit,
+        expandButton: View,
+        expandIcon: ImageView,
+        onToggleExpand: (Boolean) -> Unit
+    ) {
+        val recommendationAdapter = RecommendationAdapter(recommendations, onAddButtonClick)
+
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = recommendationAdapter
+            isNestedScrollingEnabled = false
+            visibility = if (isRecommendationsExpanded) {
+                View.VISIBLE
+            }
+            else View.GONE
+        }
+
+        expandButton.setOnClickListener {
+            val updatedVisibility = recyclerView.visibility != View.VISIBLE
+            recyclerView.visibility = if (updatedVisibility) {
+                View.VISIBLE
+            }
+                else View.GONE
+            onToggleExpand(updatedVisibility) // Update the state in the calling context
+        }
+
+        recommendationAdapter.notifyDataSetChanged()
+    }
+
+
 
     fun setupQuantityDropdown(
         context: Context,

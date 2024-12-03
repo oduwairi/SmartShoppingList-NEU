@@ -1,19 +1,12 @@
 package com.iriawud.smartshoppinglist.ui.shopping
 
-import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextWatcher
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +29,7 @@ class ShoppingFragment : Fragment() {
     private val binding get() = _binding!!
     private var isInputBarExpanded: Boolean = false
     private var isBottomMenuExpanded: Boolean = false
+    private var isRecommendationsExpanded: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -59,34 +53,38 @@ class ShoppingFragment : Fragment() {
         )
         binding.shoppingRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.shoppingRecyclerView.adapter = adapter
-
-        // Configure Recommendation Box
-        val emptyStateSuggestionBox = binding.root.findViewById<View>(R.id.emptyStateSuggestionBoxContainer)
-        val recommendationRecyclerView = emptyStateSuggestionBox.findViewById<RecyclerView>(R.id.recommendationRecyclerView)
-
-        recommendationRecyclerView.layoutManager = LinearLayoutManager(context)
-
         shoppingViewModel.recommendations.observe(viewLifecycleOwner) { recommendations ->
-            val maxVisibleItems = 50 // Set the maximum number of visible items
-            val recommendationAdapter = RecommendationAdapter(recommendations, maxVisibleItems) { recommendation ->
-                // Handle adding recommendation to shopping list
-                val categoryMap = CategoryRepository.getCategories().associateBy { it.category_id }
-                val newItem = Item(
-                    id = recommendation.item_id,
-                    name = recommendation.item_name,
-                    quantity = "${recommendation.quantity} ${recommendation.quantity_unit ?: "pcs"}",
-                    category = categoryMap[recommendation.category_id]?.category_name ?: "Uncategorized", // Map ID to name
-                    price = "${recommendation.price ?: 0.0} ${recommendation.currency ?: "USD"}",
-                    priority = recommendation.priority,
-                    imageUrl = recommendation.image_url,
-                    frequency = "${recommendation.frequency_value ?: "Not set"} ${recommendation.frequency_unit ?: ""}",
-                    createdAt = Item.getCurrentTimestamp()
-                )
-                shoppingViewModel.addItem(newItem)
-                shoppingViewModel.deleteRecommendationItem(recommendation)
-            }
-            recommendationRecyclerView.adapter = recommendationAdapter
-            recommendationAdapter.notifyDataSetChanged() // Ensure recommendations update
+            val emptyStateSuggestionBox = binding.root.findViewById<View>(R.id.emptyStateSuggestionBoxContainer)
+            val recommendationRecyclerView = emptyStateSuggestionBox.findViewById<RecyclerView>(R.id.recommendationRecyclerView)
+            val minimizeCard = emptyStateSuggestionBox.findViewById<CardView>(R.id.minimizeRecommendationCard)
+
+            GuiUtils.setupRecommendationRecyclerView(
+                context = requireContext(),
+                recyclerView = recommendationRecyclerView,
+                recommendations = recommendations,
+                isRecommendationsExpanded = isRecommendationsExpanded,
+                onAddButtonClick = { recommendation ->
+                    // Handle adding recommendation to shopping list
+                    val categoryMap = CategoryRepository.getCategories().associateBy { it.category_id }
+                    val newItem = Item(
+                        id = recommendation.item_id,
+                        name = recommendation.item_name,
+                        quantity = "${recommendation.quantity} ${recommendation.quantity_unit ?: "pcs"}",
+                        category = categoryMap[recommendation.category_id]?.category_name ?: "Uncategorized",
+                        price = "${recommendation.price ?: 0.0} ${recommendation.currency ?: "USD"}",
+                        priority = recommendation.priority,
+                        imageUrl = recommendation.image_url,
+                        frequency = "${recommendation.frequency_value ?: "Not set"} ${recommendation.frequency_unit ?: ""}",
+                        createdAt = Item.getCurrentTimestamp()
+                    )
+                    shoppingViewModel.addItem(newItem)
+                    shoppingViewModel.deleteRecommendationItem(recommendation)
+                },
+                expandButton = minimizeCard,
+                onToggleExpand = { isExpanded ->
+                    isRecommendationsExpanded = isExpanded
+                }
+            )
         }
 
 

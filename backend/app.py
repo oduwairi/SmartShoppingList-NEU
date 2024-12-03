@@ -399,8 +399,7 @@ def delete_recommendation_item(item_id):
         query = "DELETE FROM recommendation_items WHERE item_id = %s"
         cursor.execute(query, (item_id,))
         db.commit()
-        
-        # Get rowcount before closing the cursor
+
         rowcount = cursor.rowcount
 
         cursor.close()
@@ -456,7 +455,8 @@ def generate_recommendations():
             }
             recommendations.append(recommended_item)
 
-        # Return generated recommendations
+        # Return and add generated recommendations
+        add_recommendation_items(recommendations)
         return jsonify(recommendations), 200
 
     except Exception as e:
@@ -502,9 +502,6 @@ def add_recommendation_items():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-
-
-
 
     
 @app.route('/train_model', methods=['POST'])

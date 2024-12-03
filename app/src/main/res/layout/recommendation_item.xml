@@ -1,64 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="4dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/recommendationItemCard"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
+        app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <TextView
+                android:id="@+id/notInterestedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/albert_sans_medium_italic"
+                android:text="Not interested?"
+                android:textColor="#990000"
+                app:layout_constraintStart_toStartOf="@id/recommendationAddButton"
+                app:layout_constraintTop_toBottomOf="@id/recommendationAddButton" />
+
+            <androidx.cardview.widget.CardView
                 android:id="@+id/recommendationAddButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:tint="@color/deep_green_end"
-                app:layout_constraintBottom_toBottomOf="@id/recommendationItemIcon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/recommendationItemIcon"
-                app:srcCompat="@drawable/plus_svgrepo_com" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                app:cardBackgroundColor="@color/deep_green_end"
+                app:cardCornerRadius="15dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recommendationItemBasedOn">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/addToListText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:fontFamily="@font/albert_sans_bold"
+                        android:text="Add to List"
+                        android:textColor="@color/white_items"
+                        app:layout_constraintBottom_toBottomOf="@id/recommendationAddButtonIcon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/recommendationAddButtonIcon" />
+
+                    <ImageView
+                        android:id="@+id/recommendationAddButtonIcon"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="30dp"
+                        android:tint="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/addToListText"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/plus_svgrepo_com" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/recommendationItemBasedOn"
-                android:layout_width="wrap_content"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/albert_sans_bold"
                 android:text="Based on recent purchases"
                 android:textColor="#787878"
-                app:layout_constraintStart_toStartOf="@id/recommendationItemName"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recommendationItemName" />
 
             <TextView
                 android:id="@+id/recommendationItemName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
                 android:fontFamily="@font/albert_sans_bold"
                 android:text="Chip"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                app:layout_constraintStart_toEndOf="@id/recommendationItemIcon"
-                app:layout_constraintTop_toTopOf="@id/recommendationItemIcon" />
+                app:layout_constraintEnd_toEndOf="@id/recommendationItemIcon"
+                app:layout_constraintStart_toStartOf="@id/recommendationItemIcon"
+                app:layout_constraintTop_toBottomOf="@id/recommendationItemIcon" />
 
             <ImageView
                 android:id="@+id/recommendationItemIcon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="50dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/electronics" />
