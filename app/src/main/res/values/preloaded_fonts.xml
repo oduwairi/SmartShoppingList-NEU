@@ -8,5 +8,6 @@
         <item>@font/albert_sans_italic</item>
         <item>@font/albert_sans_medium_italic</item>
         <item>@font/albert_sans_thin</item>
+        <item>@font/electrolize</item>
     </array>
 </resources>

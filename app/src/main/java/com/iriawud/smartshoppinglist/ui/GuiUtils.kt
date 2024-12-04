@@ -214,7 +214,6 @@ object GuiUtils {
         isRecommendationsExpanded: Boolean,
         onAddButtonClick: (RecommendationItem) -> Unit,
         expandButton: View,
-        expandIcon: ImageView,
         onToggleExpand: (Boolean) -> Unit
     ) {
         val recommendationAdapter = RecommendationAdapter(recommendations, onAddButtonClick)
@@ -546,22 +545,18 @@ object GuiUtils {
     }
 
     fun expandView(view: View) {
-        // Temporarily set the view to INVISIBLE for accurate measurement
+        // Temporarily set the view to INVISIBLE to get accurate measurements
         view.visibility = View.INVISIBLE
-
-        // Measure the target height
         view.measure(
             View.MeasureSpec.makeMeasureSpec((view.parent as View).width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.UNSPECIFIED
         )
         val targetHeight = view.measuredHeight
 
-        // Reset the height to 0 and set the visibility to VISIBLE
         view.layoutParams.height = 0
         view.visibility = View.VISIBLE
         view.requestLayout()
 
-        // Animate the height from 0 to the target height
         val animator = ValueAnimator.ofInt(0, targetHeight)
         animator.addUpdateListener { animation ->
             view.layoutParams.height = animation.animatedValue as Int
@@ -570,7 +565,6 @@ object GuiUtils {
 
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                // Set the height to WRAP_CONTENT after the animation ends
                 view.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 view.requestLayout()
             }
@@ -579,7 +573,6 @@ object GuiUtils {
         animator.duration = 300 // Animation duration in milliseconds
         animator.start()
     }
-
 
     fun collapseView(view: View) {
         val initialHeight = view.measuredHeight
@@ -596,9 +589,10 @@ object GuiUtils {
             }
         })
 
-        animator.duration = 300 // Animation duration in ms
+        animator.duration = 300 // Animation duration in milliseconds
         animator.start()
     }
+
 
     fun getHighlightedText(
         fullText: String,

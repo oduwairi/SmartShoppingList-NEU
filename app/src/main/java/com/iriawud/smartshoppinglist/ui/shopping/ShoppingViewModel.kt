@@ -422,7 +422,38 @@ class ShoppingViewModel : ViewModel(), ItemViewModel {
     }
 
     fun deleteAllItems() {
-        _items.value?.clear()
-        _items.postValue(_items.value)  // Notify observers of the change
+        viewModelScope.launch {
+            try {
+                // Indicate loading state
+                _isLoading.postValue(true)
+
+                // Get all item IDs to delete from the database
+                val itemIds = _items.value?.mapNotNull { it.id } ?: emptyList()
+
+                // Make API calls to delete each item
+                itemIds.forEach { itemId ->
+                    try {
+                        val response = RetrofitInstance.api.deleteShoppingItem(itemId)
+                        if (!response.isSuccessful) {
+                            Log.e("ShoppingViewModel", "Failed to delete item with ID: $itemId")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("ShoppingViewModel", "Error deleting item with ID: $itemId", e)
+                    }
+                }
+
+                // Clear local list
+                _items.value?.clear()
+                _items.postValue(_items.value) // Notify observers of the change
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., network issues)
+                _error.postValue("Error deleting all items: ${e.message}")
+                Log.e("ShoppingViewModel", "Error deleting all items: ${e.message}", e)
+            } finally {
+                // Reset loading state
+                _isLoading.postValue(false)
+            }
+        }
     }
+
 }

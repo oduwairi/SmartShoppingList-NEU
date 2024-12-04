@@ -193,6 +193,29 @@ class ShoppingFragment : Fragment() {
             )
         }
 
+        binding.buttonDoneAll.setOnClickListener {
+            isBottomMenuExpanded = GuiUtils.toggleExpandableMenuButtons(
+                binding.buttonMenuExpand,
+                binding.bottomExpandableMenuButtons,
+                isBottomMenuExpanded
+            )
+
+            val checkoutDialog = CheckoutDialog(
+                shoppingItems = shoppingViewModel.items.value ?: emptyList(), // Get items from ViewModel
+                onFinishCheckout = {
+                    // Add each item back to the database
+                    shoppingViewModel.items.value?.forEach { item ->
+                        shoppingViewModel.addItem(item)
+                    }
+
+                    // Handle checkout completion logic (delete all items)
+                    shoppingViewModel.deleteAllItems()
+                }
+            )
+            checkoutDialog.show(childFragmentManager, "CheckoutDialog")
+        }
+
+
         // Set on click listener for category card to open category selection dialog
         binding.setCategoryCard.setOnClickListener {
             val dialog = CategorySelectionDialog { selectedCategory ->
@@ -234,6 +257,31 @@ class ShoppingFragment : Fragment() {
                     adapter.updateItems(allItems)
                 }
             )
+        }
+
+        binding.buttonSort.setOnClickListener {
+            isBottomMenuExpanded = GuiUtils.toggleExpandableMenuButtons(
+                binding.buttonMenuExpand,
+                binding.bottomExpandableMenuButtons,
+                isBottomMenuExpanded
+            )
+            val items = shoppingViewModel.items.value ?: listOf()
+            val sortDialog = SortDialog(
+                items = items,
+                onApplySort = { sortedItems ->
+                    adapter.updateItems(sortedItems.toMutableList())
+                }
+            )
+            sortDialog.show(childFragmentManager, "SortDialog")
+        }
+
+        // Observe ViewModel items and update adapter
+        shoppingViewModel.items.observe(viewLifecycleOwner) { items ->
+            adapter.updateItems(items)
+        }
+
+        binding.buttonDeleteAll.setOnClickListener {
+            shoppingViewModel.deleteAllItems()
         }
     }
 
