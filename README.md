@@ -70,5 +70,14 @@ Follow these steps to set up the app on your local environment:
 
 8. Run the App  
    Click the **Run** button (green triangle) or press `Shift + F10` to deploy the app on the selected emulator or connected device.
+
 """
+## Database Import Instructions
+
+To import the database backup:
+
+1. Open MySQL Workbench and connect to your server.
+2. Go to **Server > Data Import**.
+3. Select **Import from Self-Contained File** and choose `db/shopping_database.sql`.
+4. Click **Start Import** to restore the database.
 
